@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema<IUser>({
 // 3. Now make actual model with the Schema and give it a name
 
 // If model already exist in memory (models array) then take it or create a new one
-const User = mongoose.models.User || mongoose.model("User", userSchema)
+const UserModel = mongoose.models.User || mongoose.model("User", userSchema)
 
 // 4. export it as default
-export default User
+export default UserModel

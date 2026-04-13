@@ -9,8 +9,13 @@ if(!mongodb_uri){
 /*
     By default, Next.js routes (especially when hosted on platforms like Vercel) run as Serverless Functions. These are "ephemeral," meaning they wake up to handle a request and go back to sleep afterward. 
 
-    The Potential Issue: If you write await client.connect() inside your function, every single visitor triggers a brand-new connection process, which is slow (adding ~100ms+ latency) and can quickly hit MongoDB's connection limits.
-    The Solution (Caching): Professional Next.js setups use a global variable to "cache" the connection. If the serverless function is still "warm" from a previous visitor, it reuses the existing connection instead of making a new one. 
+    The Potential Issue: If you write await client.connect() inside your function, 
+        every single visitor triggers a brand-new connection process, 
+        which is slow (adding ~100ms+ latency) and can quickly hit MongoDB's connection limits.
+        
+    The Solution (Caching): Professional Next.js setups use a global variable to "cache" the connection. 
+        If the serverless function is still "warm" from a previous visitor, 
+        it reuses the existing connection instead of making a new one. 
 */
 
 // Check if we already have a connection in the global cache

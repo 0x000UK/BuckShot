@@ -1,10 +1,17 @@
-import mongoose from "mongoose";
+import dns from "node:dns"
+dns.setServers(['1.1.1.1', '8.8.8.8']); //cloudflare , google
+
+import mongoose, { MongooseError } from "mongoose";
 
 const mongodb_uri = process.env.MONGODB_URL
 
 if(!mongodb_uri){
     throw new Error("db url not found!")
 }
+
+
+// Returns an array of IP addresses used for DNS resolution
+
 
 /*
     By default, Next.js routes (especially when hosted on platforms like Vercel) run as Serverless Functions. These are "ephemeral," meaning they wake up to handle a request and go back to sleep afterward. 
@@ -27,14 +34,21 @@ if(!cached) {
 }
 
 export default async function connectDB(){
-    if(cached.conn) return cached.conn; // Return existing conection
 
+    if(cached.conn) return cached.conn; // Return existing conection
     if(!cached.promise){
         // Start the connection process and store the PROMISE
         cached.promise = mongoose.connect(mongodb_uri!).then((m)=>m.connection)
     }
 
     // wait for the promise to resolve and store the connection
-    cached.conn = await cached.promise
+    try {
+        cached.conn = await cached.promise
+    }
+    catch (error){
+        cached.promise = null;
+        console.error("DATABASE CONNECTION ERROR:", error);
+        throw new MongooseError('MongoDB connection promise failed to resolve')
+    }
     return cached.conn
 }

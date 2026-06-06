@@ -1,33 +1,38 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {JetBrains_Mono , Plus_Jakarta_Sans, Jost} from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+import { SessionProvider } from "next-auth/react";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-mono'});
+const jakartasans = Plus_Jakarta_Sans({variable : '--font-jk'})
+const jost = Jost({variable: '--font-jost'})
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
-  title: "Games Store",
-  description: "Store of repacked games",
+	title: "Games Store",
+	description: "Store of repacked games",
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
-    </html>
-  );
+	return (
+		<html
+			lang="en"
+			className={cn("bg-blck","h-full", "antialiased", jetbrainsMono.variable, jakartasans.variable, jost.variable)}
+		>
+			<body className="min-h-full flex flex-col">
+				<SessionProvider>
+					<Nav/>
+					{children}
+					<Footer/>
+				</SessionProvider>
+			</body>
+		</html>
+	);
 }

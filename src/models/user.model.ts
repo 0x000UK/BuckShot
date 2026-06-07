@@ -10,7 +10,11 @@ import mongoose, { Document} from "mongoose";
 interface IUser extends Document {
     name : string,
     email : string,
-    password? : string
+    password : string,
+    role? : string,
+    badge? : string[]
+    createdAt : Date
+    updatedAt: Date
 }
 
 // 2. create schema based on defined type
@@ -30,7 +34,16 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     password : {
         type : String,
-    }
+        required : true
+    },
+    role : {
+        type : String,
+        enum : ["user", "admin"],
+        default : "user"
+    },
+    badge : [{
+        type : String
+    }]
 },
 {
     timestamps : true

@@ -3,8 +3,7 @@ import {JetBrains_Mono , Plus_Jakarta_Sans, Jost} from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { SessionProvider } from "next-auth/react";
-import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
+import { AlertStack } from "@/components/Toast";
 
 const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-mono'});
 const jakartasans = Plus_Jakarta_Sans({variable : '--font-jk'})
@@ -28,9 +27,8 @@ export default function RootLayout({
 		>
 			<body className="min-h-full flex flex-col">
 				<SessionProvider>
-					<Nav/>
 					{children}
-					<Footer/>
+					<AlertStack/>
 				</SessionProvider>
 			</body>
 		</html>

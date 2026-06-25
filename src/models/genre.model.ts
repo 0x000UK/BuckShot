@@ -1,14 +1,6 @@
-import mongoose from "mongoose"
+import mongoose, { type InferSchemaType } from "mongoose"
 
-interface IGenre {
-    name : String
-    slug : String
-    gameCount : number
-    createdAt : Date
-    updatedAt: Date
-}
-
-const GenreSchema = new mongoose.Schema<IGenre>({
+const GenreSchema = new mongoose.Schema({
     name : {
         type  :String,
         required : true
@@ -27,5 +19,10 @@ const GenreSchema = new mongoose.Schema<IGenre>({
 })
 
 const GenreModel = mongoose.models.Genre || mongoose.model("Genre",GenreSchema )
+
+export type DBGenreSchema = InferSchemaType<typeof GenreSchema> & {
+    _id: mongoose.Types.ObjectId,
+    createdAt?: Date;
+}
 
 export default GenreModel

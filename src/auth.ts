@@ -1,4 +1,4 @@
-import connectDB from "@/lib/mongodb";
+import connectDB from "@/app/lib/mongodb";
 import UserModel from "@/models/user.model";
 import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";

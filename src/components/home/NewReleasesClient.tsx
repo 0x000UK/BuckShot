@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import Image from 'next/image';
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { BRAND, BRAND_GOLD, BRAND_LIGHT, EASE, GAME_TAGS } from "@/lib/utils";
 import type { TaggedGame } from "@/types/game";
 import { AnimatePresence, motion } from "motion/react";
@@ -29,6 +30,11 @@ export default function NewReleasesClient({ games }: { games: TaggedGame[] }) {
 
     if (!games || games.length === 0 || !displayed) return null;
 
+    const imageUrl = useMemo(() => {
+        const featureTag = displayed.tagFeatures?.find(t => t.type === GAME_TAGS.NEW_RELEASE);
+        return featureTag?.image || displayed.cover;
+    }, [displayed]);
+
     return (
         <AnimatePresence>
             <Section
@@ -40,7 +46,7 @@ export default function NewReleasesClient({ games }: { games: TaggedGame[] }) {
                 exploreLabel="View All Releases"
             >
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-                    {/* ─── Left: Spotlight Feature ─── */}
+                    {/* Spotlight Feature ─── */}
                     <motion.div
                         initial={{ opacity: 0, y: 24 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -54,22 +60,23 @@ export default function NewReleasesClient({ games }: { games: TaggedGame[] }) {
                     >
                         <div className="relative h-80 md:h-90 overflow-hidden bg-black">
                             <AnimatePresence mode="sync">
-                                <motion.div
-                                    key={displayed.id}
-                                    className="absolute inset-0"
-                                    style={{
-                                        // backgroundImage: `url('${displayed.tagFeatures?.[0]?.image || displayed.cover || ""}')`,
-                                        backgroundImage: `url('${displayed.tagFeatures.find((t)=> t.type === GAME_TAGS.NEW_RELEASE)?.image || displayed.cover}')`,
-                                        
-                                        backgroundSize: "cover",
-                                        backgroundPosition: "center",
-                                    }}
-                                    initial={{ opacity: 0, scale: 1.05 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.8, ease: EASE }}
+                            <motion.div
+                                key={displayed.id}
+                                className="absolute inset-0 overflow-hidden"
+                                initial={{ opacity: 0, scale: 1.05 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.8, ease: EASE }}
+                            >
+                                <Image
+                                    src={imageUrl}
+                                    alt="Game background"
+                                    fill
+                                    sizes="50vw"
+                                    className="object-cover object-center"
                                 />
-                            </AnimatePresence>
+                            </motion.div>
+                        </AnimatePresence>
 
                             <div
                                 className="absolute inset-0 pointer-events-none"
@@ -201,25 +208,24 @@ export default function NewReleasesClient({ games }: { games: TaggedGame[] }) {
                                         <div className="relative px-4 md:px-6 lg:px-8 py-4 flex items-center gap-5">
                                             {/* Mini Image */}
                                             <div
-                                                className="relative w-14 md:w-16 h-18 md:h-20 shrink-0 overflow-hidden rounded-none"
-                                                style={{ border: `1px solid ${isActive ? BRAND_GOLD : `${BRAND}44`}` }}
+                                                className="relative h-18 w-14 shrink-0 overflow-hidden rounded-none md:h-20 md:w-16 transition-colors duration-300"
+                                                style={{ borderColor: isActive ? BRAND_GOLD : `${BRAND}44`, borderStyle: 'solid', borderWidth: '1px' }}
                                             >
-                                                <div
-                                                    className="absolute inset-0 transition-transform duration-700 group-hover:scale-110"
-                                                    style={{
-                                                        backgroundImage: `url('${r.cover}')`,
-                                                        backgroundSize: "cover",
-                                                        backgroundPosition: "center",
-                                                    }}
-                                                />
-                                                <div className="absolute inset-0 grain" style={{ opacity: 0.35 }} />
-                                                <div
-                                                    className="absolute inset-0"
-                                                    style={{
-                                                        background:
-                                                            "linear-gradient(180deg, transparent 0%, rgba(11,9,8,0.12) 40%, rgba(11,9,8,0.8) 100%)",
-                                                    }}
-                                                />
+                                                <div className="absolute inset-0 overflow-hidden group">
+                                                    <Image
+                                                        src={r.cover}
+                                                        alt="Thumbnail cover"
+                                                        fill
+                                                        sizes="(max-width: 768px) 56px, 64px"
+                                                        className="object-cover object-center transition-transform duration-700 ease-out will-change-transform group-hover:scale-110"
+                                                    />
+                                                </div>
+
+                                                {/* Grain Overlay */}
+                                                <div className="absolute inset-0 grain opacity-35 pointer-events-none" />
+
+                                                {/* Gradient Overlay */}
+                                                <div className="absolute inset-0 bg-linear-to-b from-transparent via-[rgba(11,9,8,0.12)] via-40% to-[rgba(11,9,8,0.8)] to-100% pointer-events-none" />
                                             </div>
 
                                             {/* Title and meta */}

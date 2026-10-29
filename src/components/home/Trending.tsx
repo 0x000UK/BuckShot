@@ -35,7 +35,7 @@ async function TrendingData() {
                     <div key={game.id} className="transition-transform duration-200 hover:-translate-y-1">
                         <Link
                             href={`/g/${game.id}/${game.slug}`}
-                            className="group relative flex items-center p-4 rounded-none transition-colors duration-300 h-[140px] block"
+                            className="group relative flex items-center p-4 rounded-none transition-colors duration-300 h-[140px]"
                             style={{
                                 background: "linear-gradient(90deg, rgba(17,14,11,0.6) 0%, rgba(11,9,8,0) 100%)",
                                 border: `1px solid ${BRAND}22`,
@@ -56,7 +56,7 @@ async function TrendingData() {
                                 <Image
                                     src={game.cover}
                                     alt={game.title}
-                                    fill
+                                    sizes="(max-width: 768px) 56px, 64px"
                                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                                 />
                             </div>

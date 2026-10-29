@@ -1,5 +1,6 @@
 "use client";
 
+import Image from 'next/image'
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
@@ -11,7 +12,7 @@ function ReleaseEntry({ item, index }: { item: TaggedGame; index: number }) {
     const flipped = index % 2 === 1;
     const [notified, setNotified] = useState(false);
 
-    const imgUrl : string |null | undefined = item.tagFeatures.find((t)=> t.type === GAME_TAGS.COMING_SOON)?.image
+    const imgUrl : string = item.tagFeatures.find((t)=> t.type === GAME_TAGS.COMING_SOON)?.image || '/images/logo_4x.png'
     return (
         <motion.article
             initial={{ opacity: 0, y: 30 }}
@@ -30,14 +31,17 @@ function ReleaseEntry({ item, index }: { item: TaggedGame; index: number }) {
                 style={{ minHeight: 320 }}
             >
                 <div className="absolute inset-0 overflow-hidden">
-                    <div
-                        className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
-                        style={{
-                            backgroundImage: `url('${imgUrl}')`,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                        }}
+                    {/* Next.js Image replacing the backgroundImage div */}
+                    <Image
+                        src={imgUrl}
+                        alt="Descriptive alt text here" 
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 60vw"
+                        className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                        // Add `priority` if this image is above the fold (LCP)
+                        // priority={true} 
                     />
+                    
                     <div
                         className="absolute inset-0 pointer-events-none"
                         style={{

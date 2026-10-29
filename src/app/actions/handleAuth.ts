@@ -120,7 +120,6 @@ export async function handleAuth(
             return { errors: { message: 'An account with that email or username already exists.' } };
         }
         else if (error instanceof MongooseError) {
-            console.log(error.message);
             return { errors: { message: `Failed to ${type === 'signin' ? "LogIn" : "Register"}. Please contact an admin.` } };
         }
     

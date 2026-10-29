@@ -1,4 +1,6 @@
 "use client"
+
+import Image from "next/image";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -117,7 +119,8 @@ export default function FeaturedSpotlight({ games }: { games: TaggedGame[] }) {
                               >
                                    {games.map((game, i) => {
                                         const isActive = i === idx;
-                                        const img = game.tagFeatures.find((t) => t.type == GAME_TAGS.FEATURED)?.image
+                                        const img = game.tagFeatures.find((t) => t.type == GAME_TAGS.FEATURED)?.image;
+
                                         return (
                                              <motion.div
                                                   key={game.id}
@@ -130,52 +133,54 @@ export default function FeaturedSpotlight({ games }: { games: TaggedGame[] }) {
                                                   className="relative shrink-0 h-full rounded-none overflow-hidden shadow-2xl border border-[#7a6b4f]/25 hover:border-[#c4a97d]/40 transition-colors group"
                                              >
                                                   <Link href={`/g/${game.id}/${game.slug}`} className="block w-full h-full relative">
-                                                       {/* Background Artwork */}
-                                                       <div
-                                                            className="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-                                                            style={{ backgroundImage: `url('${img}')` }}
-                                                       />
+                                                       
+                                                       {/* 
+                                                       Optimized Next.js Image Component 
+                                                       Replaces the absolute div with background-image
+                                                       */}
+                                                       {img && (
+                                                            <Image
+                                                                 src={img}
+                                                                 alt={`${game.title} featured image`}
+                                                                 fill
+                                                                 sizes="(max-width: 768px) 100vw, (max-width: 1280px) 60vw, 33vw"
+                                                                 priority={i < 2}
+                                                                 className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                                                            />
+                                                       )}
 
-                                                       {/* Multi-directional Dark Vignette for absolute text legibility */}
                                                        <div className="absolute inset-0 bg-linear-to-t md:bg-linear-to-r from-black/95 via-black/80 md:via-black/65 to-black/30 md:to-transparent pointer-events-none" />
 
                                                        {/* Card Content */}
-                                                       <div className="relative z-10 w-full md:w-3/5 h-full p-6 sm:p-8 md:p-10 flex flex-col justify-end md:justify-center text-white">
+                                                       <div className="relative z-1 w-full md:w-3/5 h-full p-6 sm:p-8 md:p-10 flex flex-col justify-end md:justify-center text-white">
                                                             {/* Badge/Tag */}
                                                             <div className="mb-2.5 sm:mb-3 md:mb-4">
-                                                                 <span 
-                                                                      className="font-jost font-semibold tracking-[0.2em] uppercase text-[10px] sm:text-xs px-2.5 sm:px-3.5 py-1 rounded-none border border-[#c4a97d]/35 inline-block"
-                                                                      style={{ background: `${BRAND}95`, color: "#f4efe4" }}
-                                                                 >
-                                                                      {game.tags && game.tags[0] ? game.tags[0] : "FEATURED"}
-                                                                 </span>
+                                                            <span 
+                                                                 className="font-jost font-semibold tracking-[0.2em] uppercase text-[10px] sm:text-xs px-2.5 sm:px-3.5 py-1 rounded-none border border-[#c4a97d]/35 inline-block"
+                                                                 style={{ background: `${BRAND}95`, color: "#f4efe4" }}
+                                                            >
+                                                                 {game.tags && game.tags[0] ? game.tags[0] : "FEATURED"}
+                                                            </span>
                                                             </div>
 
-                                                            {/* Title */}
-                                                            <h3 
-                                                                 className="font-jk text-2xl sm:text-3xl md:text-4xl font-light mb-2 sm:mb-3 leading-tight tracking-tight text-[#f4efe4] line-clamp-2"
-                                                            >
+                                                            <h3 className="font-jk text-2xl sm:text-3xl md:text-4xl font-light mb-2 sm:mb-3 leading-tight tracking-tight text-[#f4efe4] line-clamp-2">
                                                                  {game.title}
                                                             </h3>
 
-                                                            {/* Description */}
-                                                            <p 
-                                                                 className="font-jost text-xs sm:text-sm md:text-base leading-relaxed line-clamp-2 sm:line-clamp-3 md:line-clamp-4 text-white/75"
-                                                            >
-                                                                 {game.synopsis ||
-                                                                      "Handpicked premium titles curated for the discerning player. Explore groundbreaking narratives and unmatched visual mastery."}
+                                                            <p className="font-jost text-xs sm:text-sm md:text-base leading-relaxed line-clamp-2 sm:line-clamp-3 md:line-clamp-4 text-white/75">
+                                                                 {game.synopsis}
                                                             </p>
 
                                                             {/* Action Link */}
                                                             <div className="mt-3 sm:mt-5 flex items-center gap-1.5 text-[#c4a97d] font-jost text-[10px] sm:text-xs font-semibold tracking-[0.2em] uppercase group-hover:text-white transition-colors">
-                                                                 <span>Explore Title</span>
-                                                                 <ChevronRight size={13} className="transition-transform duration-300 group-hover:translate-x-1" />
+                                                            <span>Explore Title</span>
+                                                            <ChevronRight size={13} className="transition-transform duration-300 group-hover:translate-x-1" />
                                                             </div>
                                                        </div>
                                                   </Link>
                                              </motion.div>
                                         );
-                                   })}
+                                        })}
                               </motion.div>
                          </div>
 

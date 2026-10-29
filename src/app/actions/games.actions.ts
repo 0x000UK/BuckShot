@@ -448,7 +448,7 @@ export async function scheduleGamePublish(
             };
         }
     } catch (err: unknown) {
-        console.error("Failed to schedule game publish:", err);
+        //console.error("Failed to schedule game publish:", err);
         return {
             success: false,
             error: err instanceof Error ? err.message : "Failed to set publish schedule.",

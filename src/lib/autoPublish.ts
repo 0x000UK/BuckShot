@@ -119,10 +119,10 @@ export async function checkAndPublishScheduledGames(): Promise<number> {
         }
 
         lastCheckTime = Date.now();
-        console.log(`[AutoPublish] Successfully published and updated tags for ${scheduledGames.length} scheduled game(s).`);
+        //console.log(`[AutoPublish] Successfully published and updated tags for ${scheduledGames.length} scheduled game(s).`);
         return scheduledGames.length;
     } catch (err) {
-        console.error("[AutoPublish] Error checking scheduled games:", err);
+        //console.error("[AutoPublish] Error checking scheduled games:", err);
         return 0;
     }
 }

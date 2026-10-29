@@ -58,7 +58,7 @@ function GenreChip({ label }: { label: string }) {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: EASE }}
-            className="inline-flex items-center px-2.5 py-1 text-[9px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.12em] uppercase font-['Jost'] font-medium border border-[#7a6b4f]/30 text-[#c4a97d]/80 bg-[#7a6b4f]/8 hover:border-[#c4a97d]/50 hover:text-[#c4a97d] hover:bg-[#7a6b4f]/[0.14] transition-all duration-200 cursor-default select-none rounded-none"
+            className="inline-flex items-center px-2.5 py-1 text-[9px] sm:text-[10px] tracking-widest sm:tracking-[0.12em] uppercase font-['Jost'] font-medium border border-[#7a6b4f]/30 text-[#c4a97d]/80 bg-[#7a6b4f]/8 hover:border-[#c4a97d]/50 hover:text-[#c4a97d] hover:bg-[#7a6b4f]/[0.14] transition-all duration-200 cursor-default select-none rounded-none"
         >
             {label}
         </motion.span>
@@ -79,7 +79,6 @@ export default function ProductHero({ game }: { game: GameData }) {
                     priority
                     className="object-cover object-[center_20%] sm:object-center opacity-75 sm:opacity-88"
                     sizes="100vw"
-                    unoptimized
                 />
             </div>
 
@@ -162,7 +161,7 @@ export default function ProductHero({ game }: { game: GameData }) {
                                 initial={{ opacity: 0, y: 16 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, ease: EASE, delay: 0.1 }}
-                                className="font-jk text-white leading-[1.08] tracking-wide font-semibold text-2xl sm:text-3xl md:text-5xl lg:text-6xl break-words"
+                                className="font-jk text-white leading-[1.08] tracking-wide font-semibold text-2xl sm:text-3xl md:text-5xl lg:text-6xl wrap-break-word"
                                 style={{
                                     textShadow: "0 2px 32px rgba(0,0,0,0.7)",
                                 }}
@@ -176,7 +175,7 @@ export default function ProductHero({ game }: { game: GameData }) {
                                     initial={{ opacity: 0, y: 12 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.5, ease: EASE, delay: 0.14 }}
-                                    className="font-jost text-sm sm:text-base md:text-xl lg:text-2xl text-[#c4a97d]/90 font-normal tracking-[0.03em] mt-1 break-words"
+                                    className="font-jost text-sm sm:text-base md:text-xl lg:text-2xl text-[#c4a97d]/90 font-normal tracking-[0.03em] mt-1 wrap-break-word"
                                     style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8)" }}
                                 >
                                     {game.subtitle}

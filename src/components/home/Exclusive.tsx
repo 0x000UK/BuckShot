@@ -21,9 +21,10 @@ async function ExclusiveData() {
         <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#080808] py-24">
             <div className="absolute inset-0">
                 <Image
-                    src="https://c4.wallpaperflare.com/wallpaper/951/583/798/fantasy-art-warrior-dark-souls-iii-dark-souls-wallpaper-preview.jpg"
+                    src="https://wallpapercave.com/wp/wp13908216.jpg"
                     alt="Exclusive Games Background"
                     fill
+                    sizes = "100vw"
                     className="object-cover object-center"
                     priority
                 />
@@ -50,9 +51,10 @@ async function ExclusiveData() {
                                     className="group relative block w-full aspect-video rounded-none overflow-hidden border border-[#7a6b4f]/20 bg-[#0c0a08] shadow-lg cursor-pointer"
                                 >
                                     <Image
-                                        src={feature?.image || game.cover || ""}
+                                        src={feature?.image || game.cover}
                                         alt={game.title}
                                         fill
+                                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                                         className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                                     />
 
@@ -67,14 +69,6 @@ async function ExclusiveData() {
                                         <h3 className="font-jk text-lg font-medium text-[#f4efe4] group-hover:text-[#c4a97d] transition-colors duration-300">
                                             {game.title}
                                         </h3>
-
-                                        <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-500 ease-out">
-                                            <div className="overflow-hidden">
-                                                <p className="text-white/60 text-xs font-light leading-relaxed line-clamp-3 pt-2">
-                                                    {feature?.blurb || game.synopsis}
-                                                </p>
-                                            </div>
-                                        </div>
                                     </div>
                                 </Link>
                             </div>

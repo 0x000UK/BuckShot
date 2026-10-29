@@ -43,7 +43,7 @@ export async function UpdateUserData(prev: SaveState, payload: UserUpdatePayload
         revalidatePath('/a/dashboard/users');
         return { success: true, errors: {} };
     } catch (error: unknown) {
-        console.error("CRITICAL ERROR IN UpdateUserData: ", error);
+        console.error("Error in UpdateUserData: ", error);
         return { 
             success: false, 
             errors: { 

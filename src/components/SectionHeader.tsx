@@ -1,85 +1,74 @@
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
-import {easeIn, motion } from 'motion/react'
-import Link from 'next/link'
-import React from 'react'
-import FilterButton from './FilterButton'
+import { motion } from "motion/react";
+import { BRAND, BRAND_GOLD, BRAND_LIGHT, EASE } from "@/lib/utils"
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { Select } from "./admin/gameModel/utils";
 
-type SectionHeaderProps = {
-    title: string,
-    nav?: {  // renders navigation button
-        onScroll?: (direction: 'left' | 'right') => void
-        onPrev?: ()=>void
-        onNext?: ()=>void
-        disabledLeft: boolean
-        disabledRight: boolean
-        snap? : boolean
+type Props = {
+    title?: string;
+    nav?: {
+        onScroll?: (dir: 'left' | 'right') => void
+        onPrev?: () => void;
+        onNext?: () => void;
+        count?: string;
     }
-    filter? : boolean // renders filter button
-    explore?: { //renders explore all button
-        exploreLink? : string
+    exploreLink?: string
+    filters? : {
+        sortBy : string, // 'default' | 'title' | 'createdAt'
+        sortByOptions : {value : string, label : string}[] 
+        onChangeSortBy : (v:string)=>void,
+        sortOrder : string // 'none' | 'asc' | 'desc' 
+        sortOrderOptions : {value : string , label : string}[]
+        onChangeSortOrder : (v:string)=> void
     }
-}
+};
 
-function NavBtn({
-    onClick,
-    disabled,
-    children,
-}: {
-    onClick: () => void
-    disabled: boolean
-    children: React.ReactNode
-}) {
+export default function SectionHeader({
+    title,
+    nav,
+    exploreLink,
+    filters
+}: Props) {
     return (
-        <motion.button
-            onClick={onClick}
-            disabled={disabled}
-            whileHover={disabled ? {} : { borderColor: '#c4a97d', backgroundColor: 'rgba(122,107,79,0.1)' }}
-            whileTap={disabled ? {} : { scale: 0.94 }}
-            className="
-                w-4 h-4 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 flex items-center justify-center
-                bg-transparent text-primary border border-secondary/30
-                hover:bg-secondary/10 hover:border-primary/60
-                active:scale-95 transition-all duration-200 cursor-pointer
-            "
-            style={{
-                borderColor: disabled ? 'rgba(255,255,255,0.08)' : '#7a6b4f',
-                color: disabled ? 'rgba(255,255,255,0.15)' : '#c4a97d',
-            }}
-        >
-            {children}
-        </motion.button>
-    )
-}
-
-export default function SectionHeader({ title, nav, filter, explore }: SectionHeaderProps) {
-
-    
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.6, ease: easeIn }}
-            className="flex items-center justify-between mb-2 sm:mb-4 md:mb-6 pb-4"
-            style={{ borderBottom: '1px solid rgba(122,107,79,0.12)' }}
-        >
-            <div className="flex items-center gap-3">
-                <div className='w-0.75 h-5.5 bg-secondary shrink-0' />
-                <h2
-                    className='text-[16px] sm:text-xl md:text-2xl font-medium tracking-[0.12em] uppercase font-jost text-white/85'
+        <div className="flex items-end justify-between gap-6 my-2 flex-wrap">
+            {title && 
+            <div className="min-w-0">
+                <motion.h2
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
+                    className="font-jk text-[20px] md:text-xl uppercase tracking-wide"
+                    style={{ color: "#f4efe4" }}
                 >
                     {title}
-                </h2>
-            </div>
-            {/* Right Side Controls: Explore Button & Arrows */}
-            <div className="flex items-center gap-3">
-
-                {filter && <FilterButton/>}
-                {/* Render Explore link only if prop is provided */}
-                {explore && explore.exploreLink && (
+                </motion.h2>
+            </div>}
+            <div className="flex gap-3">
+                {filters && (
+                    <div className="flex gap-3 items-center">
+                        {/* <span className="text-[12px] text-nowrap items-center">Sort By : </span> */}
+                        <Select
+                            value={filters.sortBy}
+                            onChange={filters.onChangeSortBy}
+                            options={filters.sortByOptions}
+                            placeholder="Sort By"
+                            className="min-w-32"
+                        />
+                        
+                        {/* <span className="text-[12px] text-nowrap items-center">Order By : </span> */}
+                        <Select
+                            value={filters.sortOrder}
+                            onChange={filters.onChangeSortOrder}
+                            options={filters.sortOrderOptions}
+                            placeholder="Order By"
+                            className="min-w-28"
+                        />
+                    </div>
+                )}
+                {exploreLink && (
                     <Link
-                        href={explore.exploreLink}
+                        href={exploreLink}
                         className="
                             hidden sm:flex items-center gap-2 h-10 px-4 rounded-none
                             text-[10px] font-semibold tracking-[0.2em] uppercase
@@ -92,29 +81,55 @@ export default function SectionHeader({ title, nav, filter, explore }: SectionHe
                         <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                 )}
-
-                {/* Navigation Arrows */}
-                {nav && <div className="flex gap-1 sm:gap-2">
-                    <NavBtn 
-                        onClick={() => {
-                            if(nav.onScroll) nav.onScroll('left')
-                            if(nav.onPrev) nav.onPrev()
-                        }} 
-                        disabled={nav.disabledLeft}
-                    >
-                        <ChevronLeft size={14} />
-                    </NavBtn>
-                    <NavBtn onClick={() => {
-                            if(nav.onScroll) nav.onScroll('right')
-                            if(nav.onNext) nav.onNext()
-                        }} 
-                        disabled={nav.disabledRight}>
-                        <ChevronRight size={14} />
-                    </NavBtn>
-                </div>}
-
+                {nav && (
+                    <div className="flex items-center gap-2">
+                        <NavArrow dir="left" onClick={
+                            () => {
+                                if (nav.onScroll) nav.onScroll('left')
+                                if (nav.onPrev) nav.onPrev()
+                            }
+                        } />
+                        <NavArrow dir="right" onClick={
+                            () => {
+                                if (nav.onScroll) nav.onScroll('right')
+                                if (nav.onNext) nav.onNext()
+                            }
+                        } />
+                    </div>
+                )}
             </div>
-        </motion.div>
 
-    )
+        </div>
+    );
+}
+
+function NavArrow({ dir, onClick }: { dir: "left" | "right"; onClick: () => void }) {
+    return (
+        <motion.button
+            onClick={onClick}
+            whileHover={{ borderColor: BRAND_GOLD, color: BRAND_GOLD }}
+            whileTap={{ scale: 0.94 }}
+            className="relative w-10 h-10 flex items-center justify-center transition-colors cursor-pointer"
+            style={{
+                border: `1px solid ${BRAND}66`,
+                background: `${BRAND}0a`,
+                color: BRAND_LIGHT,
+            }}
+        >
+            <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                style={{ transform: dir === "left" ? "rotate(180deg)" : "none" }}
+            >
+                <path
+                    d="M3 7h8M8 4l3 3-3 3"
+                    stroke="currentColor"
+                    strokeWidth="1.2"
+                    strokeLinecap="square"
+                />
+            </svg>
+        </motion.button>
+    );
 }

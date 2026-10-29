@@ -1,6 +1,6 @@
 'use client'
 import { AnimatePresence, motion } from "motion/react";
-import React, { startTransition, useActionState, useEffect, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import {
 	Table,
 	TableBody,
@@ -10,94 +10,63 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 
-import { BRAND, BRAND_LIGHT, EASE } from "@/lib/utils";
-import { ActionBtn, DeleteBtn, DeleteModal, Modal } from "./ui";
+import {EASE } from "@/lib/utils";
+import { ActionBtn, DeleteBtn, Modal } from "./ui";
 import type { Genre } from "@/types/game";
 import { useSearchParams } from "next/navigation";
-import { SaveGenre } from "@/app/actions/dbActions";
+import { SaveGenre } from "@/app/actions/games.actions";
 import { Field, Input } from "./gameModel/utils";
+import { toast } from "@/stores/alertStore";
 
 
-export function AddCategoryModal({ onClose }: { onClose: () => void }) {
-
-	const [genre, setGenre] = useState({id:"" ,name: "", slug: "",gameCount : 0 });
-	const [state, formAction, isPending] = useActionState(SaveGenre, { errors: {}, success: false })
-
-
-	const handleSave = async () => {
-		startTransition(() => {
-			formAction(genre)
-		});
-	}
+function AddCategoryModal({value , setValue , errors} : {value : Genre , setValue : (v:Genre)=>void , errors? : any}) {
 
 	// Local state to manage errors on the client side
 	const [clientErrors, setClientErrors] = useState<any>({});
 
-	// Sync server errors to local state whenever a form submission returns
-	useEffect(() => {
-		if (state?.errors) {
-			setClientErrors(state.errors);
-		}
-		if(state.success) onClose()
-	}, [state]);
-
 	// Handler to clear a specific error when the user types
-	const handleInputChange = (fieldName : string, value : string) => {
+	const handleInputChange = (fieldName : string, v : string) => {
 		setClientErrors((prev: any) => ({
 			...prev,
 			[fieldName]: null, // Wipe out the error for this field
 			server : null
 		}));
-		setGenre({ ...genre, [fieldName]: value })
+		setValue({ ...value, [fieldName]: v })
 	};
 	return (
-		<Modal title="Add Category" onClose={onClose}>
-			<div className="flex flex-col gap-4">
-				<Field label="Category Name *">
-					<Input value={genre.name} onChange={(v: string) => handleInputChange("name",v)} placeholder="e.g. Souls-like" />
-					{clientErrors?.name && (
-						<span className="text-[10px] font-medium text-red-500 mt-0.5">
-							{state.errors.name}
-						</span>
-					)}
-				</Field>
-				<Field label="Slug">
-					<Input value={genre.slug} onChange={(v: string) => handleInputChange("slug",v)} placeholder="e.g. souls-like" />
-					{clientErrors?.slug && (
-						<span className="text-[10px] font-medium text-red-500 mt-0.5">
-							{clientErrors.slug}
-						</span>
-					)}
-				</Field>
-				<div className="flex justify-between gap-3 pt-2 border-t border-[#7a6b4f]/20">
-					<div>
-						{state?.errors?.server &&
-							<span className="text-[10px] font-medium text-red-500 mt-0.5">
-								{state.errors.server}
-							</span>}
-					</div>
-					<div>
-						<button
-							onClick={onClose}
-							className="px-4 py-2 font-jost text-[10px] tracking-[0.14em] uppercase text-white/30 hover:text-white/55 transition-colors duration-150"
-						>
-							Cancel
-						</button>
-						<motion.button
-							whileHover={{ borderColor: `${BRAND_LIGHT}60`, backgroundColor: `${BRAND}25` }}
-							whileTap={{ scale: 0.97 }}
-							disabled={isPending}
-							onClick={handleSave}
-							className="px-5 py-2 font-jost text-[10px] tracking-[0.14em] uppercase border rounded-sm transition-all duration-200"
-							style={{ borderColor: `${BRAND_LIGHT}40`, color: BRAND_LIGHT, background: `${BRAND}18` }}
-						>
-							{isPending ? "Saving..." : "Add Category"}
-						</motion.button>
-					</div>
-
-				</div>
-			</div>
-		</Modal>
+        <motion.div 
+            initial={{ scale: 0.96, y: 10 }}
+            animate={{ scale: 1, y: 0 }}
+            exit={{ scale: 0.96, y: 10 }}
+            className="w-full max-w-md  flex flex-col gap-4 shadow-2xl mt-3"
+        >
+            <div className="flex flex-col gap-4">
+                <Field label="Category Name *">
+                    <Input value={value.name} onChange={(v: string) => handleInputChange("name",v)} placeholder="e.g. Souls-like" />
+                    {clientErrors?.name && (
+                        <span className="text-[10px] font-medium text-red-500 mt-0.5">
+                            {errors.name}
+                        </span>
+                    )}
+                </Field>
+                <Field label="Slug">
+                    <Input value={value.slug} onChange={(v: string) => handleInputChange("slug",v)} placeholder="e.g. souls-like" />
+                    {clientErrors?.slug && (
+                        <span className="text-[10px] font-medium text-red-500 mt-0.5">
+                            {clientErrors.slug}
+                        </span>
+                    )}
+                </Field>
+                <div className="flex justify-between gap-3 pt-2 border-t border-[#7a6b4f]/20">
+                    <div>
+                        {errors?.server &&
+                            <span className="text-[10px] font-medium text-red-500 mt-0.5">
+                                {errors.server}
+                            </span>}
+                    </div>
+                </div>
+            </div>
+        </motion.div >
 	);
 }
 
@@ -114,18 +83,32 @@ export default function CategoriesView({
     const [addgen, setAddGen] = useState<boolean>(false)
     const [delgen, setDeleteGen] = useState<Genre | null>(null)
 
+    const defaultGen = () => ({id:"" ,name: "", slug: ""})
+
+    const [genre, setGenre] = useState(defaultGen);
+	const [state, formAction, isPending] = useActionState(SaveGenre, { errors: {}, success: null })
+
+
+    useEffect(() => {
+        if (state.success) {
+            toast.success(`Genre added successfully`);
+            queueMicrotask(() => {
+                setGenre(defaultGen());
+                setAddGen(false);
+            });
+        } else if (state.success === false) {
+            toast.error(state.errors?.message || `Failed to add genre`);
+        }
+    }, [state]);
+
+	const handleSave = async () => {
+		startTransition(() => {
+			formAction(genre)
+		});
+	}
+
     return (
         <>
-            <div className="flex items-center justify-start px-6 py-3 gap-2 border-b border-[#7a6b4f]/10 bg-[#090807] shrink-0">
-                <span className="text-[#c4a97d]/50">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                        <path d="M1 3H13M1 7H9M1 11H11" stroke="currentColor" strokeWidth="1" strokeLinecap="square" />
-                    </svg>
-                </span>
-                <span className="font-jost text-[24px] tracking-[0.14em] uppercase text-white/90">
-                    Genres
-                </span>
-            </div>
             <AnimatePresence mode="wait">
                 <motion.div
                     initial={{ opacity: 0, y: 14 }}
@@ -143,7 +126,7 @@ export default function CategoriesView({
                             </span>
                         </div>
 
-                        {/* Shadcn Table Wrapper - Added constrained height and scroll */}
+                        {/* Shadcn Table Wrapper with added constrained height and scroll */}
                         <div className="rounded-none border border-[#7a6b4f]/20 bg-[#0d0c0a]/50 [&>div]:max-h-[calc(90vh-200px)] [&>div]:overflow-y-auto">
                             <Table>
                                 <TableHeader className="sticky top-0 z-10">
@@ -197,17 +180,36 @@ export default function CategoriesView({
                 </motion.div>
             </AnimatePresence>
 
-            {delgen && <DeleteModal
-                key="delete-cat"
-                title={delgen.name}
-                onClose={() => setDeleteGen(null)}
-                onConfirm={() => { }}
-            />}
+            {delgen && 
+                <Modal
+                    title={delgen.name}
+                    cancelText="Go Back"
+                    onCancel={() => setDeleteGen(null)}
+                    confirmText="Delete"
+                    onConfirm={() => { }}
+                    destructive
+                >
+                    Permanently delete <span className="text-white font-medium">${delgen.name}</span> ? This action cannot be undone.
+                </Modal>
+            }
 
-            {addgen && <AddCategoryModal
-                key="add-cat"
-                onClose={() => setAddGen(false)}
-            />}
+            {addgen && 
+                <Modal
+                    title="Add Category"
+                    cancelText="Cancel"
+                    onCancel={() => setAddGen(false)}
+                    confirmText="Add"
+                    onConfirm={handleSave}
+                    loading={isPending}
+                >
+                    <AddCategoryModal
+                        value={genre}
+                        setValue={setGenre}
+                        errors={state.errors}
+                        key="add-cat"
+                    />
+                </Modal>
+            }
         </>
     );
 }

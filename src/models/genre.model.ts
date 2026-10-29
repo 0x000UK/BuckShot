@@ -3,16 +3,21 @@ import mongoose, { type InferSchemaType } from "mongoose"
 const GenreSchema = new mongoose.Schema({
     name : {
         type  :String,
-        required : true
+        required : true,
+        unique : true
     },
     slug : {
         type :String,
-        required : true
+        required : true,
+        unique : true
     },
     gameCount : {
         type : Number,
         required : true,
         default : 0
+    },
+    image : {
+        type : String
     }
 }, {
     timestamps : true

@@ -1,3 +1,4 @@
+import { uid } from "@/lib/utils";
 import { create } from "zustand";
 
 export type AlertType = "success" | "error" | "warning" | "info";
@@ -20,7 +21,8 @@ export const useAlertStore = create<AlertStore>((set) => ({
     alerts: [],
 
     push: (alert) => {
-        const id = crypto.randomUUID();
+        const id = uid();
+        //const id = crypto.randomUUID(); //Only works in HTTPS and localhost
         set((s) => ({ alerts: [...s.alerts, { ...alert, id }] }));
     },
 
@@ -28,7 +30,6 @@ export const useAlertStore = create<AlertStore>((set) => ({
         set((s) => ({ alerts: s.alerts.filter((a) => a.id !== id) })),
 }));
 
-// ─── Convenience helpers ──────────────────────────────────────────────────────
 
 export const toast = {
     success: (title: string, body?: string, duration?: number) =>

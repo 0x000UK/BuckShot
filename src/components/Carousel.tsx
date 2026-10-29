@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useRef } from 'react';
-import GameCard from './GameCard';
-import { Game } from '@/types/game';
+import Link from 'next/link';
+import { type GameMeta } from '@/types/game';
 import SectionHeader from './SectionHeader';
+import GameCard from './GameCard';
 
 type CarouselProps = {
     title: string;
-    games: Game[];
+    games: GameMeta[];
     exploreLink?: string; // Optional: Passing this will render the "Explore All" button
 }
 
@@ -33,35 +34,28 @@ export default function Carousel({
     };
 
     return (
-        <div className="w-full max-w-7xl mx-auto px-6 py-12 bg-background">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8">
             
             <SectionHeader 
                 title= {title} 
                 nav= {{
                     onScroll : handleScroll,
-                    disabledLeft : true,
-                    disabledRight : true
                 }}
-                explore={{exploreLink : exploreLink}}
+                exploreLink = {exploreLink}
             />
 
-            {/* ── Carousel Track ── */}
             <div 
                 ref={carouselRef}
                 className="
-                    flex gap-1 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-6
+                    flex gap-3.5 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory py-6
                     [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
                 "
             >
-                {games.map((game, idx) => (
-                    <div key={idx} className="snap-start shrink-0">
-                        <GameCard 
-                            title={game.title}
-                            img={game.coverImage}
-                            badge={game.badges}
-                            rating={game.rating?.score}
-                            genre={game.metadata?.genres}
-                        />
+                {games.map((game) => (
+                    <div key={game.id} className="snap-start shrink-0">
+                        <Link href={`/g/${game.id}/${game.slug}`} className="block">
+                            <GameCard game={game} />
+                        </Link>
                     </div>
                 ))}
             </div>

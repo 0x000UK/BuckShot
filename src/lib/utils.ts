@@ -1,23 +1,130 @@
-import { getCloudinarySignature } from "@/app/actions/cloudinary";
-import type { AdditionalContent, GameData, ImageFile } from "@/types/game";
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import type { IconType } from "react-icons";
+import { FaBoxesStacked, FaGavel, FaMedal, FaSeedling, FaShieldHalved, FaUnlockKeyhole } from "react-icons/fa6";
+import type { Badge } from "@/types/profile";
+import type { GameStatus, GameTag } from "@/types/game";
+export { sqids } from "./sqids";
 
 export const BRAND = "#7a6b4f";
 export const BRAND_LIGHT = "#a8946d";
 export const BRAND_GOLD = "#d9c28a";
 export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
+export const usernameRegex = /^[a-z0-9_]{3,15}$/;
+export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+export const BADGE_CONFIG: Record<Badge, { label: string; icon: IconType; className: string, color: string }> = {
+    admin: {
+        label: 'Admin',
+        icon: FaShieldHalved,
+        className: 'text-red-400',
+        color: "#F87171"
+    },
+    moderator: {
+        label: 'Moderator',
+        icon: FaGavel,
+        color: "#34D399",
+        className: 'text-emerald-400',
+    },
+    veteran: {
+        label: 'Veteran',
+        icon: FaMedal,
+        color: "#c4a97d",
+        className: 'text-[#c4a97d]',
+    },
+    seeder: {
+        label: 'Seeder',
+        icon: FaSeedling,
+        color: "#22D3EE",
+        className: 'text-cyan-400',
+    },
+    repacker: {
+        label: 'Repacker',
+        icon: FaBoxesStacked,
+        color: "#A78BFA",
+        className: 'text-violet-400',
+    },
+    cracker: {
+        label: 'Cracker',
+        icon: FaUnlockKeyhole,
+        color: "#FB923C",
+        className: 'text-orange-400',
+    },
+};
+
+const BADGE_PRIORITY: Badge[] = [
+    "admin",
+    "moderator",
+    "cracker",
+    "repacker",
+    "seeder",
+    "veteran",
+];
+
+export {
+    GAME_TAGS,
+    ALL_TAGS,
+    ALL_TAGS_OPTIONS,
+    ADMIN_FEATURED_TAGS,
+    TAG_CONFIGS,
+    resolveTagSlug,
+    isGameTag,
+} from "./constants/tags";
+
+export const ALL_STATUS_OPTIONS: { value: GameStatus, label: string }[] = [
+    { value: 'published', label: "Published" },
+    { value: 'draft', label: "Draft" },
+    { value: 'delisted', label: "Delisted" }
+];
+
+export const ALL_BADGE_OPTIONS: { value: Badge, label: string }[] = [
+    { value: "admin", label: "Admin" },
+    { value: "moderator", label: "Moderator" },
+    { value: "cracker", label: "Cracker" },
+    { value: "repacker", label: "Repacker" },
+    { value: "seeder", label: "Seeder" },
+    { value: "veteran", label: "Veteran" },
+];
+
+/**
+ * Gets the highest priority badge from a user's badge list.
+ * @param userBadges - Array of badges the user owns
+ * @returns The highest priority Badge, or null if the array is empty
+ */
+export function getPrimaryBadge(userBadges: Badge[]): Badge | null {
+    if (!userBadges || userBadges.length === 0) return null;
+    return BADGE_PRIORITY.find(badge => userBadges.includes(badge)) ?? null;
+}
+
+export function slugify(...args: string[]): string {
+    const slugifiedParts = args.map((str) => {
+        if (!str) return '';
+        return str
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .trim()
+            .replace(/\s+/g, '-');
+    });
+
+    return slugifiedParts.filter(Boolean).join('-');
+}
+
 export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs))
+    return twMerge(clsx(inputs));
 }
 
 export function validateEmail(email: string): boolean {
-	const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-	return emailRegex.test(email)
+    return emailRegex.test(email);
 }
 
-export function uid(length = 12) {
+export function validateHandle(handle: string): boolean {
+    return usernameRegex.test(handle);
+}
+
+export function uid(length = 12): string {
     const alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const arr = new Uint8Array(length);
     crypto.getRandomValues(arr);
@@ -26,153 +133,23 @@ export function uid(length = 12) {
 
 export function mongoId(): string {
     const timestamp = Math.floor(new Date().getTime() / 1000).toString(16);
-    const randomHex = 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, () => 
+    const randomHex = 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, () =>
         Math.floor(Math.random() * 16).toString(16)
     );
     return timestamp + randomHex;
 }
 
-export async function handleFileUpload(files: ImageFile[] | ImageFile, gameId: string, folder?: string): Promise<string[]> {
-    const folderPath = folder 
-        ? `play_store/games/${gameId}/${folder}` 
-        : `play_store/games/${gameId}`;
-
-    const upload = async (target: ImageFile) => {
-        if (!target.file) return "";
-        
-        const fileNameWithoutExtension = target.title ? target.title.replace(/\.[^/.]+$/, "") : `asset_${Date.now()}`;
-
-        // 1. Fetch a unique signature tailored to this specific file's public_id
-        const { success, errors, data } = await getCloudinarySignature(folderPath, fileNameWithoutExtension);
-
-        if (!success) {
-            throw new Error(errors?.message || `Failed to generate token for ${fileNameWithoutExtension}`);
-        }
-        
-        const formData = new FormData();
-        formData.append("file", target.file);
-        formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!);
-        formData.append("timestamp", data.timestamp.toString());
-        formData.append("signature", data.signature);
-        formData.append("folder", folderPath); 
-        formData.append("public_id", fileNameWithoutExtension);
-
-        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-            method: "POST",
-            body: formData,
-        });
-
-        if (!res.ok) {
-            const errJson = await res.json().catch(() => ({}));
-            throw new Error(errJson.error?.message || `Upload failed for asset: ${target.title}`);
-        }
-        
-        const cloudinary_data = await res.json();
-        return cloudinary_data.secure_url;
-    };
-
-    const uploadPromises = Array.isArray(files) ? files.map(upload) : [upload(files)];
-    return await Promise.all(uploadPromises);
+export function hexToRgba(hex: string, alpha: number): string {
+    const cleanHex = hex.replace('#', '');
+    const r = parseInt(cleanHex.substring(0, 2), 16);
+    const g = parseInt(cleanHex.substring(2, 4), 16);
+    const b = parseInt(cleanHex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-export async function processAllFileUploads(data: GameData, setValue: any) {
-    const payload = { ...data } as Record<keyof GameData, any>;
-    const uploadQueue: Promise<void>[] = [];
-
-    // Helper 1: Process Single Image Fields
-    const queueSingleImage = (fieldKey: keyof GameData) => {
-        const imageObj = payload[fieldKey] as any;
-        if (imageObj?.file) {
-            uploadQueue.push(
-                handleFileUpload(imageObj, data.id).then((urls) => {
-                    if (urls.length && urls[0]) {
-                        payload[fieldKey] = { ...imageObj, previewUrl: urls[0], file: undefined };
-                        setValue(fieldKey, payload[fieldKey]);
-                    }
-                })
-            );
-        }
-    };
-
-    // Helper 2: Process Arrays of Additional Content (DLCs, Bonus Content)
-    const queueAdditionalContent = (fieldKey: "bonusContent" | "dlcs") => {
-        const items = payload[fieldKey];
-        if (!items || items.length === 0) return;
-
-        const itemsWithFiles = items.filter((item : any) => item.imageFile?.file);
-        if (itemsWithFiles.length > 0) {
-            // Extract just the imageFile objects for the batch upload
-            const filesToUpload = itemsWithFiles.map((item : any) => item.imageFile);
-            
-            uploadQueue.push(
-                handleFileUpload(filesToUpload, data.id, fieldKey).then((urls) => {
-                    let urlIdx = 0;
-                    payload[fieldKey] = items.map((item : any) => {
-                        if (item.imageFile?.file) {
-                            const updatedItem = {
-                                ...item,
-                                imageFile: {
-                                    ...item.imageFile,
-                                    previewUrl: urls[urlIdx++],
-                                    file: undefined,
-                                },
-                            };
-                            return updatedItem;
-                        }
-                        return item;
-                    });
-                    setValue(fieldKey, payload[fieldKey]);
-                })
-            );
-        }
-    };
-
-    // 1. Queue Single Files
-    queueSingleImage("logoImageFile");
-    queueSingleImage("coverImageFile");
-    queueSingleImage("bannerImageFile");
-    queueSingleImage("bannerImageFile2");
-
-    // 2. Queue Screenshots Batch
-    if (payload.previewImages && payload.previewImages.length > 0) {
-        const newScreenshots = payload.previewImages.filter((img : ImageFile) => img.file);
-        if (newScreenshots.length > 0) {
-            uploadQueue.push(
-                handleFileUpload(newScreenshots, data.id, "screenshots").then((urls) => {
-                    let urlIdx = 0;
-                    payload.previewImages = payload.previewImages.map((img : ImageFile) => {
-                        if (img.file) {
-                            return { ...img, previewUrl: urls[urlIdx++], file: undefined };
-                        }
-                        return img;
-                    });
-                    setValue("previewImages", payload.previewImages);
-                })
-            );
-        }
-    }
-
-    // 3. Queue Nested Content Files
-    queueAdditionalContent("dlcs");
-    queueAdditionalContent("bonusContent");
-
-    // Wait for all uploads (concurrently) to finish
-    if (uploadQueue.length > 0) {
-        await Promise.all(uploadQueue);
-    }
-
-    // 4. Final safety strip: Ensure absolutely no `file` blobs leak into the DB payload
-    const stripFile = (imgObj: any) => (imgObj ? { ...imgObj, file: undefined } : imgObj);
-
-    return {
-        ...payload,
-        logoImageFile: stripFile(payload.logoImageFile),
-        coverImageFile: stripFile(payload.coverImageFile),
-        bannerImageFile: stripFile(payload.bannerImageFile),
-        bannerImageFile2: payload.bannerImageFile2 ? stripFile(payload.bannerImageFile2) : null,
-        previewImages: payload.previewImages?.map(stripFile) || [],
-        bonusContent: payload.bonusContent?.map((item : AdditionalContent) => ({ ...item, imageFile: stripFile(item.imageFile) })) || null,
-        dlcs: payload.dlcs?.map((item : AdditionalContent) => ({ ...item, imageFile: stripFile(item.imageFile) })) || null,
-    };
+export function isUserModerator(user?: { role?: string; badges?: string[] } | null): boolean {
+    if (!user) return false;
+    if (user.role === 'admin' || user.role === 'moderator') return true;
+    if (Array.isArray(user.badges) && (user.badges.includes('admin') || user.badges.includes('moderator'))) return true;
+    return false;
 }

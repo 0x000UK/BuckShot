@@ -1,102 +1,124 @@
 'use client'
-import { easeIn, easeOut, motion } from 'motion/react'
 
-const fadeUp = (delay = 0) => ({
-    initial: { opacity: 0, y: 30},
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.8, delay, ...easeOut },
-})
+import { motion } from 'motion/react'
+import Image from 'next/image'
+import { EASE } from '@/lib/utils'
+
+const cinematicFadeUp = {
+    initial: { opacity: 0, y: 30, filter: "blur(4px)" },
+    animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+    transition: { duration: 0.8, ease: EASE }
+}
 
 export default function Hero() {
     return (
-        <div className="relative min-h-screen w-full overflow-hidden flex flex-col bg-[#080808]">
+        <div className="relative h-[65svh] sm:h-[75svh] md:h-screen min-h-[460px] sm:min-h-[540px] md:min-h-[680px] w-full overflow-hidden flex flex-col justify-end bg-[#080808]">
 
-            {/* ── Background Layers ── */}
-            <div className="absolute inset-0 z-0 bg-cover bg-center opacity-50"
-                style={{ backgroundImage: "url('/images/heros/hero4.jpg')" }} />
-            
-            <div className="absolute inset-0 z-1 bg-linear-to-b from-transparent from-70% to-[#080808]" />
-            <div className="absolute inset-0 z-1 bg-linear-to-r from-[#080808] to-transparent" />
-            {/* <div className="absolute inset-0 z-1 bg-[radial-gradient(ellipse_at_center,transparent,rgba(8,8,8)_60%)]" /> */}
+            <div className="absolute inset-0">
+                <Image
+                    src="/images/heros/hero.jpg"
+                    alt="Hero Cinematic Background"
+                    fill
+                    priority
+                    className="object-cover object-center opacity-70 scale-105"
+                />
 
+                <div className="absolute inset-0 bg-linear-to-t from-[#080808] via-[#080808]/30 to-[#080808]/70" />
+                <div className="absolute inset-0 bg-radial from-transparent via-[#080808]/10 to-[#080808]/85" />
 
+                <div
+                    className="absolute inset-0 opacity-[0.06] mix-blend-overlay pointer-events-none"
+                    style={{
+                        backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")"
+                    }}
+                />
+            </div>
 
-            {/* Left vertical accent line */}
-            <div className="absolute left-12 top-0 bottom-0 w-px z-1 pointer-events-none opacity-50 bg-linear-to-b from-transparent via-[#7a6b4f] to-transparent" />
-
-            {/* Corner brackets */}
-            <div className="absolute top-7 right-10 w-9 h-9 border-t border-r border-[#7a6b4f] opacity-25 z-1 pointer-events-none" />
-            <div className="absolute bottom-22 right-10 w-9 h-9 border-b border-r border-[#7a6b4f] opacity-25 z-1 pointer-events-none" />
-
-            {/* ── Hero Content ── */}
-            <div className="relative z-10 flex-1 flex flex-col justify-center px-24 pr-8 my-16 max-w">
-                {/* Headline stack */}
-                <motion.div
-                    // {...fadeUp(0.25)}
-                    className="tracking-[0.025em] m-0"
-                    style={{ lineHeight: 0.9 }}
+            {/* ── Mobile Layout */}
+            <div className="md:hidden absolute bottom-0 left-0 right-0 px-6 sm:px-10 pb-8 sm:pb-12 flex flex-col items-start pointer-events-none select-none z-10">
+                <motion.span
+                    variants={cinematicFadeUp}
+                    initial="initial"
+                    animate="animate"
+                    className="font-jost text-[#f4efe4]/80 font-light text-lg sm:text-2xl uppercase tracking-[0.25em]"
                 >
-                    <motion.span 
-						initial = {{opacity : 1, x : -700}}
-						animate = {{opacity : 1, x : 0}}
-						transition={{duration: 0.6}}
-						className="block text-[rgba(255,255,255,0.35)]" 
-                        style={{ fontSize: 'clamp(56px,9vw,108px)' }}>
-                        Your Next
-                    </motion.span>
-                    <motion.span 
-						initial = {{opacity : 0}}
-						animate = {{opacity : 1}}
-						transition={{duration: 2, ease: easeIn , delay: 0.6}}
-						
-						className="block text-[rgb(196,169,125)] font-extrabold font-jk" 
-                        style={{ fontSize: 'clamp(76px,12.5vw,152px)' }}>
-                        EPIC QUEST
-                    </motion.span>
-                    <motion.span 
-						initial = {{opacity : 1, x : -700}}
-						animate = {{opacity : 1, x : 0}}
-						transition={{duration: 0.6}}
-						className="block text-transparent [-webkit-text-stroke:1px_rgba(196,169,125,0.5)]"
-                        style={{ fontSize: 'clamp(56px,9vw,108px)' }}>
-                        Awaits
-                    </motion.span>
-                </motion.div>
-
-                {/* Subtext */}
-                <motion.p
-                    {...fadeUp(0.4)}
-                    className="mt-8 max-w-md text-[15px] font-light leading-[1.75] text-white/50 tracking-[0.03em]"
+                    Forge Your
+                </motion.span>
+                <motion.h1
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8, ease: EASE, delay: 0.08 }}
+                    className="font-jk text-transparent bg-clip-text bg-linear-to-r from-[#c4a97d] via-[#f0e6d2] to-[#7a6b4f] font-extrabold tracking-tight text-6xl sm:text-7xl leading-[0.9] drop-shadow-[0_0_30px_rgba(196,169,125,0.2)] my-1"
                 >
-                    Explore a massive collection of games across every genre and begin your next adventure today.
-                </motion.p>
+                    EPIC
+                </motion.h1>
 
-                {/* Search bar */}
-                <motion.div
-                    {...fadeUp(0.52)}
-                    className="flex items-center mt-10 max-w-130 border border-white/10 bg-[rgba(8,8,8,0.55)] backdrop-blur-md"
-                >
-                    <span className="flex items-center px-4 text-[#7a6b4f] text-[17px]">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-                        </svg>
-                    </span>
-
-                    <input
-                        placeholder="Open World , Cyberpunk etc..."
-                        className="flex-1 bg-transparent border-none outline-none py-3.75 px-2 font-['Jost',sans-serif] text-[13px] font-light tracking-[0.04em] text-white placeholder:text-white/50"
-                    />
-
-                    <motion.button
-                        whileHover={{ backgroundColor: '#c4a97d' }}
-                        whileTap={{ scale: 0.98 }}
-                        className="py-3.75 px-7 bg-[#7a6b4f] border-none font-['Jost',sans-serif] text-[11px] font-medium tracking-[0.22em] uppercase text-black/75 cursor-pointer transition-colors duration-200 whitespace-nowrap"
+                <div className="flex items-baseline gap-2.5 mt-1">
+                    <motion.span
+                        variants={cinematicFadeUp}
+                        initial="initial"
+                        animate="animate"
+                        className="font-jost text-[#f4efe4]/75 font-light text-sm sm:text-base uppercase tracking-[0.2em]"
                     >
-                        Explore →
-                    </motion.button>
-                </motion.div>
+                        Next
+                    </motion.span>
+                    <motion.span
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}
+                        className="font-jk text-[#c4a97d] font-bold text-3xl sm:text-4xl tracking-wider uppercase drop-shadow-[0_0_20px_rgba(196,169,125,0.15)]"
+                    >
+                        QUEST
+                    </motion.span>
+                </div>
+            </div>
+
+            {/* ── Desktop Layout (>= md): Dual Corner Split ── */}
+            <div
+                className="hidden md:flex absolute bottom-0 left-0 px-8 lg:px-16 xl:px-24 pb-12 lg:pb-16 flex-col items-start text-start pointer-events-none z-10"
+            >
+                <h1 className="font-jost leading-[0.9] tracking-tighter select-none">
+                    <motion.span
+                        variants={cinematicFadeUp}
+                        initial="initial"
+                        animate="animate"
+                        className="block text-[#f4efe4]/90 font-light text-3xl md:text-4xl lg:text-5xl"
+                    >
+                        Forge Your
+                    </motion.span>
+                    <motion.span
+                        initial={{ opacity: 0, x: -40 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}
+                        className="block font-jk text-transparent bg-clip-text bg-linear-to-r from-[#c4a97d] via-[#e5d4b3] to-[#7a6b4f] font-extrabold tracking-tight md:text-8xl lg:text-9xl xl:text-[12rem] drop-shadow-[0_0_40px_rgba(196,169,125,0.15)] leading-none"
+                    >
+                        EPIC
+                    </motion.span>
+                </h1>
+            </div>
+
+            <div
+                className="hidden md:flex absolute bottom-0 right-0 px-8 lg:px-16 xl:px-24 pb-12 lg:pb-16 flex-col items-end text-right pointer-events-none z-10"
+            >
+                <h2 className="font-jost leading-[0.85] tracking-tighter select-none">
+                    <motion.span
+                        variants={cinematicFadeUp}
+                        initial="initial"
+                        animate="animate"
+                        className="block text-[#f4efe4]/90 font-light text-3xl md:text-4xl lg:text-5xl"
+                    >
+                        Next
+                    </motion.span>
+                    <motion.span
+                        initial={{ opacity: 0, x: 40 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}
+                        className="block font-jk text-transparent bg-clip-text bg-linear-to-r from-[#c4a97d] via-[#e5d4b3] to-[#7a6b4f] font-extrabold tracking-tight md:text-8xl lg:text-9xl xl:text-[12rem] drop-shadow-[0_0_40px_rgba(196,169,125,0.15)] leading-none"
+                    >
+                        QUEST
+                    </motion.span>
+                </h2>
             </div>
         </div>
-    )
+    );
 }

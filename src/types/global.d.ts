@@ -7,10 +7,9 @@ The declare keyword is like telling TypeScript:
 	declare global "breaks out" of the file's private scope to tell TypeScript: "Hey, I’m adding a custom property called mongodbConnection to the global execution environment
 */
 declare global {
-	var mongodbConnection: {
+	var mongoose: {
 		conn: Connection | null,
 		promise: Promise<Connection> | null
-
 	}
 
 	interface Window {

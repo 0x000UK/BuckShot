@@ -1,6 +1,6 @@
-import {cn, EASE } from "@/lib/utils";
-import type { GameData, GameStatus, GameTag } from "@/types/game";
-import { motion } from "motion/react";
+import { ALL_TAGS, BRAND, BRAND_LIGHT, cn } from "@/lib/utils";
+import type { GameStatus, GameTag } from "@/types/game";
+import { motion  } from "motion/react";
 
 export type SidebarView = "overview" | "games" | "genre" | "tags" | "users";
 
@@ -12,46 +12,106 @@ export function GoldBar({ className }: { className?: string }) {
 	);
 }
 
-export const ALL_TAGS: { id: GameTag; label: string; color: string; bg: string; border: string }[] = [
-	{ id: "trending", label: "Trending", color: "#c4a97d", bg: "bg-[#c4a97d]/5", border: "border-[#c4a97d]/20" },
-	{ id: "coming-soon", label: "Upcoming", color: "#7a9a6b", bg: "bg-[#7a9a6b]/5", border: "border-[#7a9a6b]/20" },
-	{ id: "new-release", label: "New Release", color: "#6b7a9a", bg: "bg-[#6b7a9a]/5", border: "border-[#6b7a9a]/20" },
-	{ id: "featured", label: "Featured", color: "#9a8a6b", bg: "bg-[#9a8a6b]/5", border: "border-[#9a8a6b]/20" },
-	{ id: "early-access", label: "Early Access", color: "#7a6b9a", bg: "bg-[#7a6b9a]/5", border: "border-[#7a6b9a]/20" },
-	{ id: "exclusive", label: "Exclusive", color: "#6b9a8d", bg: "bg-[#6b9a8d]/5", border: "border-[#6b9a8d]/20" },
+export function Modal({
+    title,
+    message,
+    destructive = false,
+    loading = false,
+    cancelText,
+    onCancel,
+    confirmText,
+    onConfirm,
+    children,
+}: {
+    title: string;
+    message?: string;
+    destructive?: boolean;
+    loading?: boolean;
+    cancelText: string;
+    onCancel: () => void;
+    confirmText: string;
+    onConfirm: () => void;
+    children?: React.ReactNode;
+}) {
+    const glowColor = destructive ? "#dc2626" : BRAND_LIGHT;
+    const glowMidColor = destructive ? "#ff6b6b" : "#fff0bf";
+    // The "resting" border colour — always lit, even while the comet travels
+    const litColor = destructive ? "rgba(220,38,38,0.35)" : `${BRAND}30`;
 
-];
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-60 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+        >
+            <motion.div
+                initial={{ scale: 0.96, y: 10 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.96, y: 10 }}
+                className="relative w-full max-w-md p-6 bg-[#0d0c0b] flex flex-col gap-4 shadow-2xl"
+            >
+                {/* Base border - always lit, never glowing */}
+                <div
+                    className="absolute inset-0 border pointer-events-none transition-colors duration-300"
+                    style={{ borderColor: litColor }}
+                />
 
-export function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
-	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#080808]/20 backdrop-blur-[5px]">
-			<motion.div
-				initial={{ opacity: 0, y: 24, scale: 0.98 }}
-				animate={{ opacity: 1, y: 0, scale: 1 }}
-				exit={{ opacity: 0, y: 12, scale: 0.98 }}
-				transition={{ duration: 0.32, ease: EASE }}
-				className="w-full max-w-lg border border-[#7a6b4f]/40 bg-[#0d0c0a] rounded-sm shadow-2xl"
-			>
-				<div className="flex items-center justify-between px-6 py-4 border-b border-[#7a6b4f]/20">
-					<div className="flex items-center gap-3">
-						<GoldBar className="h-4" />
-						<span className="font-jost text-[11px] tracking-[0.18em] uppercase text-[#c4a97d]/80">
-							{title}
-						</span>
-					</div>
-					<button
-						onClick={onClose}
-						className="w-7 h-7 flex items-center justify-center border border-[#7a6b4f]/30 text-[#c4a97d]/50 hover:text-[#c4a97d] hover:bg-[#7a6b4f]/10 transition-colors duration-150 rounded-sm"
-					>
-						<svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-							<path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square" />
-						</svg>
-					</button>
-				</div>
-				<div className="px-6 py-5">{children}</div>
-			</motion.div>
-		</div>
-	);
+                {loading && (
+                    <div
+                        className="comet-ring absolute inset-0 pointer-events-none"
+                        style={
+                            {
+                                background: `conic-gradient(from var(--angle), ${glowMidColor} 0%, transparent var(--arc-w), transparent calc(100% - var(--arc-w)), ${glowMidColor} 100%)`,
+                                WebkitMask:
+                                    "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                                WebkitMaskComposite: "xor",
+                                maskComposite: "exclude",
+                                padding: "1.5px",
+                                filter: `drop-shadow(0 0 6px ${glowColor}) drop-shadow(0 0 12px ${glowColor})`,
+                            } as React.CSSProperties
+                        }
+                    />
+                )}
+
+                {/* Content stays above the border overlay */}
+                <div className="relative z-10">
+                    <h3 className="font-jost text-[12px] tracking-[0.2em] uppercase text-white/90">
+                        {title}
+                    </h3>
+
+                    {children ?? (
+                        <p className="font-jost text-[12px] text-[#d1d0c5]/60 leading-relaxed min-h-10 mt-4">
+                            {message}
+                        </p>
+                    )}
+
+                    <div className="flex items-center justify-end gap-3 mt-4">
+                        <button
+                            type="button"
+                            onClick={onCancel}
+                            disabled={loading}
+                            className="px-4 py-1.5 font-jost text-[10px] tracking-widest uppercase border border-white/10 text-white/40 hover:text-white/70 hover:bg-white/5 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {cancelText}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={onConfirm}
+                            disabled={loading}
+                            className="px-5 py-1.5 font-jost text-[10px] tracking-widest uppercase text-white border transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                            style={{
+                                background: destructive ? "#dc262633" : `${BRAND}15`,
+                                borderColor: destructive ? "#dc2626" : BRAND_LIGHT,
+                            }}
+                        >
+                            {loading ? "Processing..." : confirmText}
+                        </button>
+                    </div>
+                </div>
+            </motion.div>
+        </motion.div>
+    );
 }
 
 export function ActionBtn({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
@@ -71,82 +131,34 @@ export function ActionBtn({ onClick, children }: { onClick: () => void; children
 	);
 }
 
-export function TagsView({ games }: { games: GameData[] }) {
-	const tagStats = ALL_TAGS.map((t) => ({
-		...t, count: games.filter((g) => g.tags?.includes(t.id)).length,
-	}));
-
+export function DeleteBtn({ onClick }: { onClick: () => void }) {
 	return (
-		<div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-			{tagStats.map((t, i) => (
-				<motion.div
-					key={t.id}
-					initial={{ opacity: 0, y: 12 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.3, ease: EASE, delay: i * 0.07 }}
-					className={`p-5 border flex flex-col gap-3 rounded-sm ${t.bg} ${t.border}`}
-				>
-					<div className="flex items-center gap-2">
-						<div className="w-2 h-2 rounded-full" style={{ background: t.color }} />
-						<span className="font-jost text-[10px] tracking-[0.16em] uppercase" style={{ color: t.color }}>{t.label}</span>
-					</div>
-					<p className="font-jk text-[32px] leading-none" style={{ color: t.color }}>{t.count}</p>
-					<p className="font-jost text-[11px]" style={{ color: `${t.color}80` }}>games tagged</p>
-				</motion.div>
-			))}
-		</div>
-	);
-}
-
-export function DeleteModal({ title, onClose, onConfirm }: { title: string; onClose: () => void; onConfirm: () => void }) {
-	return (
-		<Modal title="Confirm Delete" onClose={onClose}>
-			<p className="font-jost text-[13px] text-white/45 mb-6">
-				Permanently delete <span className="text-white/70 font-medium">{title}</span>? This action cannot be undone.
-			</p>
-			<div className="flex justify-end gap-3">
-				<button
-					onClick={onClose}
-					className="px-4 py-2 font-jost text-[10px] tracking-[0.14em] uppercase text-white/30 hover:text-white/55 transition-colors duration-150"
-				>
-					Cancel
-				</button>
-				<motion.button
-					whileTap={{ scale: 0.97 }}
-					onClick={() => { onConfirm(); onClose(); }}
-					className="px-5 py-2 font-jost text-[10px] tracking-[0.14em] uppercase border border-[#9a6b6b]/50 text-[#dc7878]/85 bg-[#9a6b6b]/10 rounded-sm transition-all duration-200 hover:bg-[#9a6b6b]/20"
-				>
-					Delete
-				</motion.button>
-			</div>
-		</Modal>
+		<motion.button
+			whileHover={{ borderColor: "rgba(239, 68, 68, 0.55)", color: "#f87171" }}
+			whileTap={{ scale: 0.95 }}
+			transition={{ duration: 0.15 }}
+			onClick={onClick}
+			className="p-1.5 text-white/30 hover:text-red-400 border border-transparent hover:border-red-500/30 hover:bg-red-500/10 transition-colors cursor-pointer"
+			aria-label="Delete"
+		>
+			<svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+				<path d="M2 3H10M4.5 3V2C4.5 1.5 5 1 5.5 1H6.5C7 1 7.5 1.5 7.5 2V3M9 3V10C9 10.5 8.5 11 8 11H4C3.5 11 3 10.5 3 10V3" stroke="currentColor" strokeWidth="1" strokeLinecap="square" />
+			</svg>
+		</motion.button>
 	);
 }
 
 export function StatusBadge({ status }: { status: GameStatus }) {
-    const map = {
-        published: { label: "Published", classes: "text-[#6b9a6b] bg-[#6b9a6b]/10 border-[#6b9a6b]/30" },
-        draft: { label: "Draft", classes: "text-[#9a9a6b] bg-[#9a9a6b]/10 border-[#9a9a6b]/30" },
-        delisted: { label: "Delisted", classes: "text-[#9a6b6b] bg-[#9a6b6b]/10 border-[#9a6b6b]/30" },
-    };
-    const s = map[status];
-    return (
-        <span className={`px-2 py-0.5 font-jost text-[9px] tracking-[0.12em] uppercase border rounded-sm ${s.classes}`}>
-            {s.label}
-        </span>
-    );
-}
-
-export function DeleteBtn({ onClick }: { onClick: () => void }) {
+	const map = {
+		published: { label: "Published", classes: "text-[#6b9a6b] bg-[#6b9a6b]/10 border-[#6b9a6b]/30" },
+		draft: { label: "Draft", classes: "text-[#9a9a6b] bg-[#9a9a6b]/10 border-[#9a9a6b]/30" },
+		delisted: { label: "Delisted", classes: "text-[#9a6b6b] bg-[#9a6b6b]/10 border-[#9a6b6b]/30" },
+	};
+	const s = map[status];
 	return (
-		<button
-			onClick={onClick}
-			className="w-7 h-7 flex items-center justify-center border border-[#7a6b4f]/20 text-white/20 rounded-md transition-all duration-150 hover:border-red-900/50 hover:text-red-400/80 hover:bg-red-950/20"
-		>
-			<svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-				<path d="M1 3H11M4 3V1H8V3M5 6V9M7 6V9M2 3L3 11H9L10 3" stroke="currentColor" strokeWidth="1" />
-			</svg>
-		</button>
+		<span className={`px-2 py-0.5 font-jost text-[9px] tracking-[0.12em] uppercase border rounded-sm ${s.classes}`}>
+			{s.label}
+		</span>
 	);
 }
 
@@ -159,19 +171,6 @@ export function TagPill({ tag }: { tag: GameTag }) {
 			style={{ color: m.color, borderColor: `${m.color}40`, background: `${m.color}14` }}>
 			{m.label}
 		</span>
-	);
-}
-
-export function EditBtn({ onClick }: { onClick: () => void }) {
-	return (
-		<button
-			onClick={onClick}
-			className="w-7 h-7 flex items-center justify-center border border-[#7a6b4f]/25 text-[#c4a97d]/50 rounded-md transition-all duration-150 hover:border-[#c4a97d]/40 hover:text-[#c4a97d]/80 hover:bg-[#7a6b4f]/10"
-		>
-			<svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-				<path d="M8 1L11 4L4 11H1V8L8 1Z" stroke="currentColor" strokeWidth="1" strokeLinejoin="miter" />
-			</svg>
-		</button>
 	);
 }
 

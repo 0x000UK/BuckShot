@@ -1,44 +1,55 @@
-import dns from "node:dns"
-dns.setServers(['1.1.1.1', '8.8.8.8']); //cloudflare , google
+import mongoose  from "mongoose";
+import dns from 'node:dns';
+
 dns.setDefaultResultOrder('ipv4first');
+try {
+    if (process.env.DNS_SERVERS) {
+        dns.setServers(process.env.DNS_SERVERS.split(','));
+    } else {
+        dns.setServers(["1.1.1.1", "1.0.0.1"]);
+    }
+} catch {
+    // Graceful fallback to default system DNS
+}
 
 
-import mongoose, { MongooseError } from "mongoose";
-
-const mongodb_uri = process.env.MONGODB_URL
+const mongodb_uri = process.env.MONGODB_URI
 
 if(!mongodb_uri){
     throw new Error("MongoDB connection URL not found")
 }
 
 // Check if we already have a connection in the global cache
-let cached = global.mongodbConnection
+let cached = global.mongoose
 
 // if it doesn't exist yet (first time is loaded), initialize it
 if(!cached) {
-    cached = global.mongodbConnection = {conn : null, promise : null}
+    cached = global.mongoose = {conn : null, promise : null}
 }
 
 export default async function connectDB(){
 
     if(cached.conn) return cached.conn; // Return existing conection
     if(!cached.promise){
-        // Start the connection process and store the PROMISE
+
         cached.promise = mongoose.connect(mongodb_uri!,{
-            family: 4, 
-            serverSelectionTimeoutMS: 5000,
-            socketTimeoutMS: 45000
-        }).then((m)=>m.connection)
+            serverSelectionTimeoutMS: 15000,
+            connectTimeoutMS : 20000,
+            socketTimeoutMS: 45000,
+            bufferCommands : false
+        }).then((m)=>{
+            return m.connection
+        })
     }
 
     // wait for the promise to resolve and store the connection
     try {
         cached.conn = await cached.promise
     }
-    catch(error : any) {
+    catch(error: unknown) {
         cached.promise = null;
         cached.conn = null;
-        throw new MongooseError('MongoDB connection promise failed to resolve')
+        throw error
     }
     return cached.conn
 }

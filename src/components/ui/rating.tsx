@@ -1,4 +1,4 @@
-import { BRAND, BRAND_GOLD, BRAND_LIGHT } from "@/utils";
+import { BRAND, BRAND_GOLD, BRAND_LIGHT } from "@/lib/utils";
 
 export function Rating({
   value,

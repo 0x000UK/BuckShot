@@ -1,74 +1,95 @@
-"use client";
+import { Suspense } from "react";
+import { getComingSoonGames } from "@/lib/queries";
+import UpcomingReleases from "./UpcomingClient";
+import { BRAND, BRAND_GOLD } from "@/lib/utils";
+import { SectionSkeleton } from "./Section";
 
-import React, { useRef } from 'react';
-import GameCard from '@/components/GameCard';
-import { GameData } from '@/types/game';
-import { motion } from 'motion/react';
-import SectionHeader from '@/components/SectionHeader';
+export default function Upcoming() {
+    return (
+        <Suspense fallback={<UpcomingSkeleton />}>
+            <UpcomingData />
+        </Suspense>
+    );
+}
 
+async function UpcomingData() {
+    const gamesData = await getComingSoonGames();
+    if (!gamesData || gamesData.length === 0) return null;
+    return <UpcomingReleases games={gamesData} />;
+}
 
-export default function Upcoming({
-    games
-}: {games : GameData[]}) {
-    const carouselRef = useRef<HTMLDivElement>(null);
-
-    // Dynamic horizontal scroll controller
-    const handleScroll = (direction: 'left' | 'right') => {
-        if (carouselRef.current) {
-            const { scrollLeft, clientWidth } = carouselRef.current;
-            // Scroll roughly 80% of the visible container width per click
-            const offset = direction === 'left' ? -clientWidth * 0.8 : clientWidth * 0.8;
-            
-            carouselRef.current.scrollTo({
-                left: scrollLeft + offset,
-                behavior: 'smooth'
-            });
-        }
-    };
+function ReleaseEntrySkeleton({ index }: { index: number }) {
+    const flipped = index % 2 === 1;
 
     return (
-        <div className="w-full max-w-7xl mx-auto px-6 py-12 bg-background">
-            
-            <SectionHeader 
-                title='Upcoming'
-                nav = {{
-                    onScroll : handleScroll,
-                    disabledLeft : true,
-                    disabledRight : true
-                }}
-            />
-
-            {/* ── Carousel Track ── */}
-            <div 
-                ref={carouselRef}
-                className="
-                    flex gap-1 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-6
-                    [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
-                "
+        <div
+            className="relative grid grid-cols-1 lg:grid-cols-12 gap-0"
+            style={{
+                border: `1px solid ${BRAND}33`,
+                background: "linear-gradient(180deg, #110e0b 0%, #0b0908 100%)",
+            }}
+        >
+            <div
+                className={`relative lg:col-span-7 bg-white/5 animate-pulse ${
+                    flipped ? "lg:order-2" : ""
+                }`}
+                style={{ minHeight: 320 }}
             >
-                {games.map((game, idx) => (
-                    <div key={idx} className="snap-start shrink-0">
-                        <GameCard 
-                            title={game.title}
-                            img={game.coverImageFile?.previewUrl}
-                            genre={game.genres}
-                            size="xw"
-                            wishlist
-                        />
-                        <div className={`flex flex-col justify-center flex-1 mx-2 w-100`}>
-                            <motion.p
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ duration: 0.5, delay: 0.38, ease: [0.22, 1, 0.36, 1] as const}}
-                                className="text-[16px] font-medium tracking-[0.02em] text-white/60 font-sans my-3 line-clamp-3"
-                            >
-                            
-                                {game.description || 'Lorem ipsum dolor sit amet consectetur adipisicing elitm illum excepturi. Sapiente magnam recusandae incidunt!'}
-                            </motion.p>              
-                        </div>
-                    </div>
-                ))}
+                <div className="absolute inset-0 pointer-events-none grain opacity-10" />
+            </div>
+
+            <div
+                className={`relative lg:col-span-5 p-8 md:p-10 flex flex-col justify-center ${
+                    flipped ? "lg:order-1" : ""
+                }`}
+                style={{
+                    borderLeft: flipped ? undefined : `1px solid ${BRAND}22`,
+                    borderRight: flipped ? `1px solid ${BRAND}22` : undefined,
+                }}
+            >
+                <div className="h-10 w-3/4 bg-white/10 rounded-none animate-pulse mb-3" />
+                <div className="h-4 w-1/3 bg-white/5 rounded-none animate-pulse mb-1" />
+
+                <div className="space-y-2.5 my-6 max-w-lg">
+                    <div className="h-3.5 w-full bg-white/5 rounded-none animate-pulse" />
+                    <div className="h-3.5 w-full bg-white/5 rounded-none animate-pulse" />
+                    <div className="h-3.5 w-4/5 bg-white/5 rounded-none animate-pulse" />
+                </div>
+
+                <div className="flex items-center gap-4 pt-4 border-t border-white/5">
+                    <div className="h-12 w-36 bg-white/10 rounded-none animate-pulse" />
+                    <div className="h-12 w-28 bg-white/5 rounded-none animate-pulse" />
+                </div>
             </div>
         </div>
+    );
+}
+
+export function UpcomingSkeleton() {
+    return (
+        <SectionSkeleton hasEyebrow hasSubtitle hasButton>
+            <div className="space-y-12">
+                {[0, 1, 2].map((i) => (
+                    <ReleaseEntrySkeleton key={i} index={i} />
+                ))}
+            </div>
+
+            <div
+                className="mt-16 p-8 md:p-12 text-center relative overflow-hidden"
+                style={{
+                    border: `1px solid ${BRAND_GOLD}33`,
+                    background: "linear-gradient(180deg, #110e0b 0%, #080808 100%)",
+                }}
+            >
+                <div className="w-48 h-3 bg-white/10 mx-auto rounded-none animate-pulse mb-3" />
+                <div className="w-80 h-8 bg-white/10 mx-auto rounded-none animate-pulse mb-4" />
+                <div className="w-96 max-w-full h-4 bg-white/5 mx-auto rounded-none animate-pulse mb-8" />
+
+                <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
+                    <div className="h-12 flex-1 bg-white/5 rounded-none animate-pulse" />
+                    <div className="h-12 w-32 bg-white/10 rounded-none animate-pulse" />
+                </div>
+            </div>
+        </SectionSkeleton>
     );
 }

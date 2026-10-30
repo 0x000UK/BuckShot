@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ContactClient from "./ContactClient";
 
 export const metadata: Metadata = {
-    title: "Contact & Creator — BuckShot",
+    title: "Contact | BuckShot",
     description:
         "Connect with the independent creator behind BuckShot for freelance inquiries, contract development, platform feedback, and bug reports.",
 };
@@ -22,7 +22,7 @@ export default function ContactPage() {
 
                     <h1 className="font-jk text-4xl sm:text-5xl md:text-6xl text-[#f4efe4] tracking-tight leading-[1.08] mb-6">
                         Built by an <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c4a97d] via-[#e8e2d2] to-[#7a6b4f]">
+                        <span className="text-transparent bg-clip-text bg-linear-to-r from-[#c4a97d] via-[#e8e2d2] to-[#7a6b4f]">
                             Independent Developer.
                         </span>
                     </h1>

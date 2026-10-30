@@ -4,11 +4,10 @@ import { useState } from "react";
 import { Mail, Check, Copy, Send, Sparkles, Globe, ExternalLink } from "lucide-react";
 import { FaGithub } from "react-icons/fa6";
 import { toast } from "@/stores/alertStore";
-import { BRAND, BRAND_GOLD, EASE } from "@/lib/utils";
 import { Select } from "@/components/admin/gameModel/utils";
 
 const CREATOR_EMAIL = "contact@buckshot.games";
-const CREATOR_GITHUB = "https://github.com";
+const CREATOR_GITHUB = "https://github.com/0x000UK";
 
 export default function ContactClient() {
     const [copied, setCopied] = useState(false);

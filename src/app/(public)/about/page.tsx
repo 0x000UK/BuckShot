@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Sparkles, Layers, ShieldCheck, Database, Cpu, Compass } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "About — BuckShot",
+    title: "About | BuckShot",
     description:
         "Learn about BuckShot, an independent cinematic PC game catalog, live cross-store price tracker, and community discovery platform.",
 };
@@ -23,7 +23,7 @@ export default function AboutPage() {
 
                     <h1 className="font-jk text-4xl sm:text-5xl md:text-6xl text-[#f4efe4] tracking-tight leading-[1.08] mb-6">
                         Archiving Digital Art. <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c4a97d] via-[#e8e2d2] to-[#7a6b4f]">
+                        <span className="text-transparent bg-clip-text bg-linear-to-r from-[#c4a97d] via-[#e8e2d2] to-[#7a6b4f]">
                             Empowering PC Gamers.
                         </span>
                     </h1>

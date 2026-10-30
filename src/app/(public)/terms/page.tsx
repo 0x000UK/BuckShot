@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FileText, AlertTriangle, ExternalLink, ShieldAlert, Award } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "Terms of Use — BuckShot",
+    title: "Terms of Use | BuckShot",
     description:
         "Terms and conditions for utilizing BuckShot, an independent game indexer, deal comparison engine, and community platform.",
 };

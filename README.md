@@ -1,4 +1,4 @@
-# [BuckShot](https://github.com/your-username/buckshot)
+# [BuckShot](https://buckshotgames.vercel.app)
 
 > A cinematic game catalog and deal discovery storefront connecting gamers with live prices, updates, and community discussions across major digital platforms.
 
@@ -61,7 +61,7 @@ Your privacy is paramount. BuckShot operates under strict data minimization prin
 - **Minimal telemetry** collected purely for site reliability, server capacity, and aggregated link click metrics.
 - External links direct you to official third-party stores which operate under their own independent privacy terms.
 
-Read our complete policy here: **[Privacy Policy](/privacy)** *(or visit [`/privacy`](file:///c:/Users/Utkarsh/VSCodes/FULLSTACK/games-store/src/app/(public)/privacy/page.tsx))*.
+Read our complete policy here: **[Privacy Policy](https://buckshotgames.vercel.app/privacy)**
 
 ---
 

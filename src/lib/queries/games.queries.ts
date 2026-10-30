@@ -252,7 +252,12 @@ export async function getGamesByTag(tag: GameTag, limit?: number): Promise<Tagge
                     .populate({
                         path: "metadata.genres",
                         select: "name",
-                    });
+                    })
+                    .sort(
+                        tag === GAME_TAGS.NEW_RELEASE
+                            ? { publishedAt: -1, createdAt: -1 }
+                            : { createdAt: -1 }
+                    );
 
                 if (limit) query = query.limit(limit);
 
@@ -292,7 +297,8 @@ export async function getComingSoonGames(limit?: number): Promise<TaggedGame[]> 
                     .populate({
                         path: "metadata.genres",
                         select: "name",
-                    });
+                    })
+                    .sort({ "metadata.releaseDate": 1, scheduledPublishAt: 1, createdAt: -1 });
 
                 if (limit) query = query.limit(limit);
 

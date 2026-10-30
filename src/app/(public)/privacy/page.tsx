@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Shield, EyeOff, ExternalLink, Database, Lock, HelpCircle } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "Privacy Policy — BuckShot",
+    title: "Privacy Policy | BuckShot",
     description:
         "BuckShot's privacy policy. Learn about our minimal telemetry, traffic monitoring, and strict commitment to user privacy.",
 };

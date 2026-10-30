@@ -133,6 +133,20 @@ export default function AuthCard() {
         })
     }
 
+    const handleOAuthClick = (provider: { id: string; label: string }) => {
+        if (provider.id === 'google' || provider.id === 'steam') {
+            toast.warning(
+                `${provider.label} Sign-In Unavailable`,
+                'Service temporarily inactive. Please sign in with username/email and password.'
+            );
+            return;
+        }
+        toast.warning(
+            `${provider.label} Sign-In Unavailable`,
+            'Service temporarily inactive.'
+        );
+    };
+
     if(!isAuthOpen) return null
 
     return (
@@ -189,6 +203,8 @@ export default function AuthCard() {
                                         whileTap={{ scale: 0.97 }}
                                         transition={{ duration: 0.2, ease: 'easeInOut' }}
                                         className="flex-1 flex items-center justify-center gap-2 py-2.5 border border-white/8 bg-white/2 rounded-none cursor-pointer"
+                                        type="button"
+                                        onClick={() => handleOAuthClick({ id, label })}
                                         title={`Continue with ${label}`}
                                     >
                                         <Image src={Icon} alt={label} width={20} height={20}/>

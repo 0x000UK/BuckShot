@@ -6,7 +6,7 @@ import { FaDiscord, FaGithub, FaGlobe, FaInstagram, FaLinkedin, FaReddit, FaStea
 import { EASE, BRAND, BRAND_LIGHT } from '@/lib/utils'
 import { Edit3, X, Loader2 } from 'lucide-react'
 import type { ProfileData } from '@/types/profile'
-import { updateUserBio } from '@/app/actions/dbActions'
+import { updateUserBio } from '@/app/actions'
 import { toast } from '@/stores/alertStore'
 import { useRouter } from 'next/navigation'
 

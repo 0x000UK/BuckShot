@@ -4,9 +4,16 @@ import Link from "next/link";
 import { getGamesByTag } from "@/lib/queries";
 import { GAME_TAGS } from "@/lib/constants/tags";
 import { BRAND, BRAND_GOLD } from "@/lib/utils";
+import type { TaggedGame } from "@/types/game";
 import Section, { SectionSkeleton } from "./Section";
 
-export default function Trending() {
+export default function Trending({ games }: { games?: TaggedGame[] }) {
+    if (games) {
+        const displayedGames = games.slice(0, 6);
+        if (displayedGames.length === 0) return null;
+        return <TrendingContent games={displayedGames} />;
+    }
+
     return (
         <Suspense fallback={<TrendingSkeleton />}>
             <TrendingData />
@@ -21,6 +28,10 @@ async function TrendingData() {
     const games = gamesData.slice(0, 6);
     if (games.length === 0) return null;
 
+    return <TrendingContent games={games} />;
+}
+
+function TrendingContent({ games }: { games: TaggedGame[] }) {
     return (
         <Section
             id="trending"

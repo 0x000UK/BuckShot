@@ -4,11 +4,11 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { MessageSquare, ThumbsUp, Trash2, ExternalLink, CornerDownRight } from 'lucide-react'
 import { EASE } from '@/lib/utils'
-import { deleteUserComment } from '@/app/actions/dbActions'
+import { deleteUserComment } from '@/app/actions'
 import { toast } from '@/stores/alertStore'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import type { UserCommentItem } from '@/lib/dbQueries'
+import type { UserCommentItem } from '@/lib/queries'
 
 interface CommentsSectionProps {
     profileId: string

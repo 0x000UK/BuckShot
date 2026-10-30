@@ -4,8 +4,14 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getGamesByTag } from "@/lib/queries";
 import { GAME_TAGS } from "@/lib/constants/tags";
+import type { TaggedGame } from "@/types/game";
 
-export default function Exclusive() {
+export default function Exclusive({ games }: { games?: TaggedGame[] }) {
+    if (games) {
+        if (games.length === 0) return null;
+        return <ExclusiveContent games={games} />;
+    }
+
     return (
         <Suspense fallback={<ExclusiveSkeleton />}>
             <ExclusiveData />
@@ -16,7 +22,10 @@ export default function Exclusive() {
 async function ExclusiveData() {
     const games = await getGamesByTag(GAME_TAGS.EXCLUSIVE, 3);
     if (!games || games.length === 0) return null;
+    return <ExclusiveContent games={games} />;
+}
 
+function ExclusiveContent({ games }: { games: TaggedGame[] }) {
     return (
         <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#080808] py-24">
             <div className="absolute inset-0">

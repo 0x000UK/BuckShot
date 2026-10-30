@@ -263,7 +263,11 @@ const GameSchema = new mongoose.Schema({
 });
 
 GameSchema.index({ status: 1 });
-GameSchema.index({ tags: 1 });
+GameSchema.index({ tags: 1, status: 1 });  // compound: covers getGamesByTag({ tags, status: "published" })
+GameSchema.index(
+    { "metadata.publisher": 1, status: 1 },
+    { collation: { locale: "en", strength: 2 } }
+);
 
 GameSchema.virtual('id').get(function() {
     if (!this.gameId) return null;

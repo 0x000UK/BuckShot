@@ -6,7 +6,7 @@ try {
     if (process.env.DNS_SERVERS) {
         dns.setServers(process.env.DNS_SERVERS.split(','));
     } else {
-        dns.setServers(["1.1.1.1", "1.0.0.1"]);
+        dns.setServers(["8.8.8.8", "1.1.1.1"]);
     }
 } catch {
     // Graceful fallback to default system DNS
@@ -36,6 +36,8 @@ export default async function connectDB(){
             serverSelectionTimeoutMS: 15000,
             connectTimeoutMS : 20000,
             socketTimeoutMS: 45000,
+            maxPoolSize: 50,
+            minPoolSize: 10,
             bufferCommands : false
         }).then((m)=>{
             return m.connection

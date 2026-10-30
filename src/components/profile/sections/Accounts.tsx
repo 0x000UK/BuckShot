@@ -18,7 +18,7 @@ import {
     Loader2
 } from 'lucide-react'
 import { EASE } from '@/lib/utils'
-import { updateAccountDetails } from '@/app/actions/dbActions'
+import { updateAccountDetails } from '@/app/actions'
 import { toast } from '@/stores/alertStore'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'

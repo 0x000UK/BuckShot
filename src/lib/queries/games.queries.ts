@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import mongoose from "mongoose";
 import GameModel from "@/models/game.model";
 import GenreModel from "@/models/genre.model";
@@ -93,7 +94,6 @@ export async function getAllGamesMeta(
 ): Promise<{ games: GameMeta[]; totalCount: number }> {
     try {
         await connectDB();
-        await triggerScheduledPublishCheck();
 
         const {
             sort: rawSort,
@@ -222,7 +222,6 @@ export async function getAdminGamesByTag(tag: GameTag): Promise<TaggedGame[]> {
 export async function getAllGamesForSelect(): Promise<{ id: string; title: string; cover?: string }[]> {
     try {
         await connectDB();
-        await triggerScheduledPublishCheck();
         const games = await GameModel.find({})
             .select("gameId title visuals.cover")
             .sort({ title: 1 })
@@ -242,31 +241,36 @@ export async function getAllGamesForSelect(): Promise<{ id: string; title: strin
 /**
  * Public per-request cached fetch of games with a specific tag (only published).
  */
-export const getGamesByTag = cache(async (tag: GameTag, limit?: number): Promise<TaggedGame[]> => {
-    try {
-        await connectDB();
-        await triggerScheduledPublishCheck();
+export async function getGamesByTag(tag: GameTag, limit?: number): Promise<TaggedGame[]> {
+    return unstable_cache(
+        async () => {
+            try {
+                await connectDB();
 
-        let query = GameModel.find({ tags: tag, status: "published" })
-            .select("gameId title subtitle slug synopsis visuals.cover metadata.publisher metadata.genres rating.score tags tagFeatures")
-            .populate({
-                path: "metadata.genres",
-                select: "name",
-            });
+                let query = GameModel.find({ tags: tag, status: "published" })
+                    .select("gameId title subtitle slug synopsis visuals.cover metadata.publisher metadata.genres rating.score tags tagFeatures status")
+                    .populate({
+                        path: "metadata.genres",
+                        select: "name",
+                    });
 
-        if (limit) query = query.limit(limit);
+                if (limit) query = query.limit(limit);
 
-        const games = await query.lean();
-        if (!games || games.length === 0) {
-            return [];
-        }
+                const games = await query.lean();
+                if (!games || games.length === 0) {
+                    return [];
+                }
 
-        return games.map((g) => taggedGameFromGameDocument(g, tag));
-    } catch (error: unknown) {
-        console.error(`Failed to fetch games by tag: ${tag}`, error instanceof Error ? error.message : String(error));
-        return [];
-    }
-});
+                return games.map((g) => taggedGameFromGameDocument(g, tag));
+            } catch (error: unknown) {
+                console.error(`Failed to fetch games by tag: ${tag}`, error instanceof Error ? error.message : String(error));
+                return [];
+            }
+        },
+        [`games-tag-${tag}`, limit != null ? String(limit) : "all"],
+        { revalidate: 300, tags: ["games", `tag-${tag}`] }
+    )();
+}
 
 /**
  * Public per-request cached fetch of coming-soon tagged games.
@@ -274,34 +278,39 @@ export const getGamesByTag = cache(async (tag: GameTag, limit?: number): Promise
  * so upcoming entries added as drafts are still visible in the home page.
  * Individual game pages are still protected (only published games accessible).
  */
-export const getComingSoonGames = cache(async (limit?: number): Promise<TaggedGame[]> => {
-    try {
-        await connectDB();
-        await triggerScheduledPublishCheck();
+export async function getComingSoonGames(limit?: number): Promise<TaggedGame[]> {
+    return unstable_cache(
+        async () => {
+            try {
+                await connectDB();
 
-        let query = GameModel.find({
-            tags: GAME_TAGS.COMING_SOON,
-            status: { $in: ["draft", "published"] },
-        })
-            .select("gameId title subtitle slug synopsis visuals.cover metadata.publisher metadata.genres rating.score tags tagFeatures status")
-            .populate({
-                path: "metadata.genres",
-                select: "name",
-            });
+                let query = GameModel.find({
+                    tags: GAME_TAGS.COMING_SOON,
+                    status: { $in: ["draft", "published"] },
+                })
+                    .select("gameId title subtitle slug synopsis visuals.cover metadata.publisher metadata.genres rating.score tags tagFeatures status")
+                    .populate({
+                        path: "metadata.genres",
+                        select: "name",
+                    });
 
-        if (limit) query = query.limit(limit);
+                if (limit) query = query.limit(limit);
 
-        const games = await query.lean();
-        if (!games || games.length === 0) {
-            return [];
-        }
+                const games = await query.lean();
+                if (!games || games.length === 0) {
+                    return [];
+                }
 
-        return games.map((g) => taggedGameFromGameDocument(g, GAME_TAGS.COMING_SOON));
-    } catch (error: unknown) {
-        console.error(`Failed to fetch coming-soon games`, error instanceof Error ? error.message : String(error));
-        return [];
-    }
-});
+                return games.map((g) => taggedGameFromGameDocument(g, GAME_TAGS.COMING_SOON));
+            } catch (error: unknown) {
+                console.error("Failed to fetch coming-soon games", error instanceof Error ? error.message : String(error));
+                return [];
+            }
+        },
+        ["games-coming-soon", limit != null ? String(limit) : "all"],
+        { revalidate: 300, tags: ["games", "tag-coming-soon"] }
+    )();
+}
 
 /**
  * Public per-request cached fetch of a single full game document by its hash ID.
@@ -355,7 +364,7 @@ export const getGamesByPublisher = cache(
         try {
             await connectDB();
             const filter: Record<string, unknown> = {
-                "metadata.publisher": { $regex: new RegExp(`^${escapeRegex(publisher.trim())}$`, "i") },
+                "metadata.publisher": publisher.trim(),
                 status: "published",
             };
 
@@ -367,6 +376,7 @@ export const getGamesByPublisher = cache(
             }
 
             const games = await GameModel.find(filter)
+                .collation({ locale: "en", strength: 2 })
                 .select("title subtitle visuals.cover slug gameId")
                 .sort({ publishedAt: -1, createdAt: -1 })
                 .limit(limit)

@@ -3,8 +3,7 @@ import { twMerge } from "tailwind-merge";
 import type { IconType } from "react-icons";
 import { FaBoxesStacked, FaGavel, FaMedal, FaSeedling, FaShieldHalved, FaUnlockKeyhole } from "react-icons/fa6";
 import type { Badge } from "@/types/profile";
-import type { GameStatus, GameTag } from "@/types/game";
-export { sqids } from "./sqids";
+import type { GameStatus } from "@/types/game";
 
 export const BRAND = "#7a6b4f";
 export const BRAND_LIGHT = "#a8946d";

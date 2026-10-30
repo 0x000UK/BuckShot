@@ -8,7 +8,7 @@ import type { FieldErrors } from "react-hook-form";
 import type { GameData } from "@/lib/game";
 import { PRESET_SITES, DownloadSiteLogo } from "@/lib/downloadLogos";
 import Image from "next/image";
-import { fetchLatestCheapSharkPricesAction } from "@/app/actions/dbActions";
+import { fetchLatestCheapSharkPricesAction } from "@/app/actions";
 import { toast } from "@/stores/alertStore";
 
 

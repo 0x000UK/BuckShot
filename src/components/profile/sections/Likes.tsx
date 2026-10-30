@@ -2,9 +2,9 @@
 
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { ThumbsUp, Gamepad2, MessageSquare, ExternalLink } from 'lucide-react'
+import { ThumbsUp, Gamepad2, MessageSquare } from 'lucide-react'
 import { EASE } from '@/lib/utils'
-import type { UserLikedItem } from '@/lib/dbQueries'
+import type { UserLikedItem } from '@/lib/queries'
 
 interface LikesSectionProps {
     profileId?: string

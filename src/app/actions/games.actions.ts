@@ -9,7 +9,7 @@ import DownloadClickModel from "@/models/downloadClick.model"
 import UserModel from "@/models/user.model"
 import CounterModel from "@/models/counter.model"
 import { type GameTag, type Genre, type OfficialDownloadLink, type TagFeatures } from "@/types/game"
-import { revalidatePath } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import z from "zod"
 import { sqids } from "@/lib/sqids"
 import { GameValidationSchema, GenreValidationSchema, type GameData } from "@/lib/game"
@@ -151,6 +151,7 @@ export async function SaveGameData(payload: SavePayloadItem): Promise<SaveState>
         await gameDoc.save();
 
         revalidatePath('/a/dashboard/games');
+        revalidateTag('games', 'max');
         return { success: true, errors: {} };
     } catch (error: unknown) {
         console.error('CRITICAL CRASH IN SaveGameData: ', error);
@@ -280,6 +281,7 @@ export async function UpdateGameData(prev: SaveState, payload: GameUpdatePayload
 
         revalidatePath('/a/dashboard/games');
         revalidatePath('/a/dashboard/tags');
+        revalidateTag('games', 'max');
         return { success: true, errors: {} };
 
     } catch (error: unknown) {
@@ -326,6 +328,7 @@ export async function deleteGame(
         revalidatePath("/a/dashboard/overview");
         revalidatePath("/store");
         revalidatePath("/");
+        revalidateTag('games', 'max');
 
         return { success: true };
     } catch (err: unknown) {
@@ -415,6 +418,7 @@ export async function scheduleGamePublish(
             revalidatePath("/a/dashboard/overview");
             revalidatePath("/store");
             if (game.slug) revalidatePath(`/g/${gameIdHash}/${game.slug}`);
+            revalidateTag('games', 'max');
 
             return {
                 success: true,
@@ -440,6 +444,7 @@ export async function scheduleGamePublish(
 
             revalidatePath("/a/dashboard/games");
             revalidatePath("/a/dashboard/overview");
+            revalidateTag('games', 'max');
 
             return {
                 success: true,
@@ -522,6 +527,8 @@ export async function saveGameTagFeatureAction(
         revalidatePath("/");
         revalidatePath("/store");
         revalidatePath(`/t/${tag}`);
+        revalidateTag('games', 'max');
+        revalidateTag(`tag-${tag}`, "max");
         if (game.slug) {
             revalidatePath(`/g/${gameIdHash}/${game.slug}`);
         }
@@ -575,6 +582,8 @@ export async function removeGameTagFeatureAction(
         revalidatePath("/");
         revalidatePath("/store");
         revalidatePath(`/t/${tag}`);
+        revalidateTag('games', 'max');
+        revalidateTag(`tag-${tag}`, "max");
 
         return { success: true };
     } catch (err: unknown) {

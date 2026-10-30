@@ -26,7 +26,7 @@ import {
 } from 'react-icons/fa6'
 import type { IconType } from 'react-icons/lib'
 import type { SocialLink } from '@/types/profile'
-import { updateUserSocials } from '@/app/actions/dbActions'
+import { updateUserSocials } from '@/app/actions/users.actions'
 import { toast } from '@/stores/alertStore'
 import { useRouter } from 'next/navigation'
 

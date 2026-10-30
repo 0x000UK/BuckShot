@@ -6,7 +6,13 @@ import { BRAND, BRAND_GOLD, BRAND_LIGHT } from "@/lib/utils";
 import type { TaggedGame } from "@/types/game";
 import Section, { SectionSkeleton } from "./Section";
 
-export default function Updated() {
+export default function Updated({ games }: { games?: TaggedGame[] }) {
+    if (games) {
+        const displayedGames = games.slice(0, 6);
+        if (displayedGames.length === 0) return null;
+        return <UpdatedContent games={displayedGames} />;
+    }
+
     return (
         <Suspense fallback={<UpdatedSkeleton />}>
             <UpdatedData />
@@ -21,6 +27,10 @@ async function UpdatedData() {
     const displayedGames = gamesData.slice(0, 6);
     if (displayedGames.length === 0) return null;
 
+    return <UpdatedContent games={displayedGames} />;
+}
+
+function UpdatedContent({ games }: { games: TaggedGame[] }) {
     return (
         <Section
             id="updates"
@@ -31,7 +41,7 @@ async function UpdatedData() {
             exploreLabel="Explore All Updates"
         >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5">
-                {displayedGames.map((item, index) => (
+                {games.map((item, index) => (
                     <UpdateCard key={item.id} item={item} index={index} />
                 ))}
             </div>

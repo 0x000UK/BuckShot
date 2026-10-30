@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import Profile from '@/components/profile';
-import { getUserById, getUserComments, getUserLikedContent } from '@/lib/dbQueries';
+import { getUserById, getUserComments, getUserLikedContent } from '@/lib/queries/users.queries';
 import type { Metadata, Viewport } from 'next';
 import { notFound, redirect } from 'next/navigation';
 

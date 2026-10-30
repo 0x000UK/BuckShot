@@ -1,10 +1,16 @@
 import { Suspense } from "react";
 import { getGamesByTag } from "@/lib/queries";
 import { GAME_TAGS } from "@/lib/constants/tags";
+import type { TaggedGame } from "@/types/game";
 import { ChevronLeft } from "lucide-react";
 import FeaturedSpotlight from "./FeaturedClient";
 
-export default function Featured() {
+export default function Featured({ games }: { games?: TaggedGame[] }) {
+    if (games) {
+        if (games.length === 0) return null;
+        return <FeaturedSpotlight games={games} />;
+    }
+
     return (
         <Suspense fallback={<FeaturedSpotlightSkeleton />}>
             <FeaturedData />

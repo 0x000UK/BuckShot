@@ -2,7 +2,7 @@ import Sqids from "sqids";
 
 const secret = process.env.SQID_SECRET;
 
-if (!secret && process.env.NODE_ENV === "production") {
+if (typeof window === "undefined" && !secret &&process.env.NODE_ENV === "production") {
     console.warn("WARNING: SQID_SECRET environment variable is missing in production.");
 }
 

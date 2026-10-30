@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { X, UploadCloud, Image as ImageIcon, Loader2 } from "lucide-react";
 import { BRAND, BRAND_LIGHT, EASE, cn } from "@/lib/utils";
 import { uploadUserMedia } from "@/lib/fileUpload";
-import { updateUserProfileMedia } from "@/app/actions/dbActions";
+import { updateUserProfileMedia } from "@/app/actions";
 import { toast } from "@/stores/alertStore";
 import { useRouter } from "next/navigation";
 

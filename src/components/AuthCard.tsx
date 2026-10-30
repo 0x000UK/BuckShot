@@ -100,8 +100,6 @@ export default function AuthCard() {
         setErrors({})
     }, [mode])
 
-    console.log(errors)
-
     const handleValueChange = (id: string, value: string) => {
 
         setformData(prev => ({ ...prev, [id]: value })) // update value to this ID

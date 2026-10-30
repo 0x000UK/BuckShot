@@ -14,6 +14,7 @@ export async function getAllGenre(): Promise<Genre[] | null> {
         const [genres, counts] = await Promise.all([
             GenreModel.find({}).sort({ name: 1 }).lean(),
             GameModel.aggregate<{ _id: mongoose.Types.ObjectId; count: number }>([
+                { $match: { status: "published" } },
                 { $unwind: "$metadata.genres" },
                 { $group: { _id: "$metadata.genres", count: { $sum: 1 } } },
             ]),

@@ -73,7 +73,13 @@ export const PRESET_SITES: PresetSite[] = [
         aliases: [],
         icon: 'https://www.indiegala.com/favicon.ico',
     },
-
+    {
+        id: "gamersgate",
+        name: "GamersGate",
+        type: "official",
+        aliases: [],
+        icon: 'https://www.gamersgate.com/favicon/favicon.ico',
+    },
 
     // Non-Official Repackers & Mirrors
     {

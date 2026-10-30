@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Modal } from "./ui";
 import { DropDownSelector } from "./gameModel/utils";
-import { UpdateUserData, deleteUserAccount } from "@/app/actions/dbActions";
+import { UpdateUserData, deleteUserAccount } from "@/app/actions";
 import { toast } from "@/stores/alertStore";
 import { useRouter } from "next/navigation";
 

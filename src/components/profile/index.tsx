@@ -18,7 +18,7 @@ import CommentsSection from './sections/Comments'
 import LikesSection from './sections/Likes'
 import ProfileMediaModal from './ProfileMediaModal'
 import { Lock } from 'lucide-react'
-import type { UserCommentItem, UserLikedItem } from '@/lib/dbQueries'
+import type { UserCommentItem, UserLikedItem } from '@/lib/queries'
 
 interface ProfileProps {
     profile: ProfileData

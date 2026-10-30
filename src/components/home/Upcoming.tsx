@@ -1,10 +1,16 @@
 import { Suspense } from "react";
 import { getComingSoonGames } from "@/lib/queries";
+import type { TaggedGame } from "@/types/game";
 import UpcomingReleases from "./UpcomingClient";
 import { BRAND, BRAND_GOLD } from "@/lib/utils";
 import { SectionSkeleton } from "./Section";
 
-export default function Upcoming() {
+export default function Upcoming({ games }: { games?: TaggedGame[] }) {
+    if (games) {
+        if (games.length === 0) return null;
+        return <UpcomingReleases games={games} />;
+    }
+
     return (
         <Suspense fallback={<UpcomingSkeleton />}>
             <UpcomingData />

@@ -1,10 +1,16 @@
 import { Suspense } from "react";
 import { getGamesByTag } from "@/lib/queries";
 import { GAME_TAGS } from "@/lib/constants/tags";
+import type { TaggedGame } from "@/types/game";
 import NewReleasesClient from "./NewReleasesClient";
 import { SectionSkeleton } from "./Section";
 
-export default function NewReleases() {
+export default function NewReleases({ games }: { games?: TaggedGame[] }) {
+    if (games) {
+        if (games.length === 0) return null;
+        return <NewReleasesClient games={games} />;
+    }
+
     return (
         <Suspense fallback={<NewReleasesSkeleton />}>
             <NewReleasesData />

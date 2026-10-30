@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { Heart, Trash2, Check, Gamepad2, ShoppingBag } from 'lucide-react'
+import { Heart, Trash2, ShoppingBag } from 'lucide-react'
 import { EASE } from '@/lib/utils'
 import { GameMeta } from '@/types/game'
-import { toggleWishlist } from '@/app/actions/dbActions'
+import { toggleWishlist } from '@/app/actions/wishlist.actions'
 import { toast } from '@/stores/alertStore'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'

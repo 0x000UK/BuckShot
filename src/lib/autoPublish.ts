@@ -1,7 +1,7 @@
 import connectDB from "./mongodb";
 import GameModel from "@/models/game.model";
 import { GAME_TAGS } from "./constants/tags";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import type { TagFeatures } from "@/types/game";
 
 declare global {
@@ -114,6 +114,9 @@ export async function checkAndPublishScheduledGames(): Promise<number> {
                     revalidatePath(`/g/${g.gameId}/${g.slug}`);
                 }
             }
+            revalidateTag("games", "max");
+            revalidateTag("tag-coming-soon", "max");
+            revalidateTag("tag-new-release", "max");
         } catch {
             // Revalidation outside request context (e.g. background timer) is caught safely
         }

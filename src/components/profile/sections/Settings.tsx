@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import { EASE } from '@/lib/utils'
 import type { ProfileSettings } from '@/types/profile'
-import { updateUserSettings } from '@/app/actions/dbActions'
+import { updateUserSettings } from '@/app/actions'
 import { toast } from '@/stores/alertStore'
 import { useRouter } from 'next/navigation'
 

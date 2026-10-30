@@ -17,7 +17,7 @@ import { RequirementsTab } from "./tabs/Requirements";
 import { DownloadTab } from "./tabs/Download";
 import FaqTab from "./tabs/FaqTab";
 import { TABS, TAB_FIELD_MAP, tabIndexToKey, tabKeyToIndex, type TabKey } from "./types";
-import { SaveGameData, reserveGameId } from "@/app/actions/dbActions";
+import { SaveGameData, reserveGameId } from "@/app/actions";
 import { EditorSidebar } from "./EditorSidebar";
 import { toast } from "@/stores/alertStore";
 import MediaGallery from "@/components/game/MediaGallery";

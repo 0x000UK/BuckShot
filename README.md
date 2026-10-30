@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# [BuckShot](https://github.com/your-username/buckshot)
 
-## Getting Started
+> A cinematic game catalog and deal discovery storefront connecting gamers with live prices, updates, and community discussions across major digital platforms.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## About
+
+You love games, I love games. You want the best deals to purchase them, and so do I! 
+
+**BuckShot** was built to guide players directly to the best deals and editions across various digital storefronts. Whether you're scouting for historic lows, day-one launches, community impressions, or upcoming blockbusters, this platform curates and tracks prices so you never overpay for your next adventure.
+
+---
+
+## How It Works
+
+```mermaid
+flowchart LR
+    A[Game Catalog & Releases] --> B[Cross-Store Price Sync]
+    B --> C[Steam / GOG / Epic / Humble]
+    C --> D[Deal Comparison Engine]
+    D --> E[User Wishlists & Discussions]
+    E --> F[Direct Verified Storefront Links]
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. **Curated Indexing**: Games are organized into canonical tracks — *New Releases*, *Trending Charts*, *Recent Updates*, *Upcoming*, and *Store Exclusives*.
+2. **Cross-Platform Price Aggregation**: Official digital storefront prices (Steam, Epic Games Store, GOG, Humble, PlayStation, Xbox) are tracked and indexed.
+3. **Automated Publishing & Pipeline**: Draft and upcoming games automatically transition to active catalog entries the moment their release date arrives.
+4. **Community & Discussions**: Verified users can participate in title discussions, build custom wishlists, track patches, and vote on community ratings.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Features
 
-## Learn More
+- **Cross-Storefront Price Tracking**: Compare prices, historical low badges, and special editions across multiple official digital platforms.
+- **Cinematic Storefront Experience**: Built with a sleek AAA launcher aesthetic inspired by modern entertainment hubs — sharp geometry, fluid motion, and ambient color theming.
+- **Curated Category & Tag Discovery**: Browse titles tailored by genres (*Souls-like*, *Action*, *RPG*, *Strategy*), and tags (*Trending*, *New Releases*, *Latest Patches*, *Early Access*).
+- **Scheduled Auto-Publishing**: Built-in automated scheduler for releases — titles transition from "Coming Soon" to "New Releases" without manual intervention.
+- **Personal Library & Wishlists**: Track games you own, save upcoming titles to your wishlist, and receive release notifications.
+- **Community Discussions & Moderation**: Threaded comments, user roles (Admin, Moderator, Repacker, Veteran, Seeder), and content moderation.
+- **Admin Dashboard (restricted access)**: Comprehensive CMS for managing game metadata, media uploads (Cloudinary), cross-store link verification, analytics, and user privileges.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Framework**: [Next.js](https://nextjs.org/) (App Router, Turbopack, React Server Components)
+- **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict Mode)
+- **Database & ODM**: [MongoDB](https://www.mongodb.com/) with [Mongoose](https://mongoosejs.com/)
+- **Authentication**: [NextAuth.js (Auth.js)](https://authjs.dev/)
+- **Styling & Motion**: [Tailwind CSS](https://tailwindcss.com/) & [Motion (Framer Motion)](https://motion.dev/)
+- **Media Hosting**: [Cloudinary](https://cloudinary.com/)
+- **ID Obfuscation**: [Sqids](https://sqids.org/)
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Privacy Policy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Your privacy is paramount. BuckShot operates under strict data minimization principles:
+- **No data selling** or third-party behavioral profiling.
+- **Minimal telemetry** collected purely for site reliability, server capacity, and aggregated link click metrics.
+- External links direct you to official third-party stores which operate under their own independent privacy terms.
+
+Read our complete policy here: **[Privacy Policy](/privacy)** *(or visit [`/privacy`](file:///c:/Users/Utkarsh/VSCodes/FULLSTACK/games-store/src/app/(public)/privacy/page.tsx))*.
+
+---
+
+## License
+
+This project is licensed under the MIT License — see the LICENSE file for details.
